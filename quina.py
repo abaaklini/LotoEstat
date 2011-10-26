@@ -10,8 +10,8 @@
         - DONE check which frequency a unit arise (ex. x0, x1, x2, x3, ..., x9))
         - DONE suggest great numbers based on this statistics
         - DONE create a local Mercurial repository on a Dropbox folder;
+        - DONE clean up the ParserPage class, striping the methods that dont belog to it;
         - create unit test;
-        - clean up the ParserPage class, striping the methods that dont belog to it;
         - create package;
         - adapt to Mega-Sena
         - adapt to Dupla-Sena
@@ -127,6 +127,7 @@ class QuinaStats ():
         self.even_odd = {"e0xo5": 0, "e1xo4": 0, "e2xo3": 0, "e3xo2": 0, "e4xo1": 0, "e5xo0": 0}
         self.doze = {"0x": 0, "1x": 0, "2x": 0, "3x": 0, "4x": 0, "5x": 0, "6x": 0, "7x": 0, "8x": 0}
         self.unit = {"x0": 0, "x1": 0, "x2": 0, "x3": 0, "x4": 0, "x5": 0, "x6": 0, "x7": 0, "x8": 0, "x9": 0}
+        self.more_often_num()
 
     def init_stat_table(self):
         """
@@ -143,18 +144,19 @@ class QuinaStats ():
     def print_more_often_num(self):
         """
         """
-        li = []
+        di ={} 
         for num in range(1,81):
-            li.append({'Freq': self.all_stat[num - 1]['More'], 'Num': num})
+            di[num] = self.all_stat[num - 1]['More']
 
-        print(li.sort())
+        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
+        print(sorted_list)
 
     def more_often_num(self):
         """
         """
         for each in self.all_content:
             for el in each["Dozens"]:
-                self.all_stat[int(el)]['More'] += 1
+                self.all_stat[int(el) - 1]['More'] += 1
 
     def print_last_time(self):
         """
