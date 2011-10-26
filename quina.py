@@ -9,10 +9,10 @@
         - DONE check which frequency a dozen arise (ex. 0x, 1x, 2x, 3x, ..., 80)
         - DONE check which frequency a unit arise (ex. x0, x1, x2, x3, ..., x9))
         - DONE suggest great numbers based on this statistics
+        - DONE create a local Mercurial repository on a Dropbox folder;
         - create unit test;
         - clean up the ParserPage class, striping the methods that dont belog to it;
         - create package;
-        - create a Mercurial repository;
         - adapt to Mega-Sena
         - adapt to Dupla-Sena
         - adapt to Lotomania
@@ -33,10 +33,45 @@ from html.parser import HTMLParser
 import pdb
 import operator
 
+def ret_unit(num):
+    """
+    """
+    return round((num/10)%1*10)
+
+def dozen(num):
+    """
+    """
+    return int((num/10)//1)
+
+def isodd(num):
+    """
+    """
+    return num & 1 and True or False
+
+def get_content ():
+    """
+    """
+    try:
+        with open('D_QUINA.HTM', encoding='latin-1') as data:
+            return (data.read())
+    
+    except IOError as err:
+        print ("File error: " + str(err))
+
+def teste ():
+    """
+    """
+    quina = QuinaStats()
+    quina.screen_interf()
+
 
 class ParsePage(HTMLParser): 
+    """
+    """
 
     def __init__(self):
+        """
+        """
         HTMLParser.__init__(self)
         self.inside_td = False
         self.counter = 0
@@ -45,10 +80,14 @@ class ParsePage(HTMLParser):
         self.key = {"Number": 0, "Date": 1, "Dozens": 2, "Accumulated": 14}
 
     def handle_starttag(self, tag, attrs):  
+        """
+        """
         if tag == 'td':
             self.inside_td = True
 
     def handle_endtag(self, tag): 
+        """
+        """
         if tag == 'td':
             self.counter += 1
             self.inside_td = False
@@ -59,6 +98,8 @@ class ParsePage(HTMLParser):
             self.raffle["Dozens"] = []
 
     def handle_data(self, data): 
+        """
+        """
         if self.inside_td and data:
             if self.counter in range(2, 7):
                 self.raffle["Dozens"].append(data)
@@ -69,11 +110,23 @@ class ParsePage(HTMLParser):
             elif self.counter == self.key["Date"]:
                 self.raffle["Date"] = data
 
-    def full_data (self):
-        for el in self.all_content:
-            print (el)
+    def get_full_data (self):
+        return (self.all_content)
     
+class QuinaStats ():
+    """
+    """
+    def __init__(self):
+        """
+        """
+
+        p = ParsePage() 
+        p.feed(get_content())
+        self.all_content = p.get_full_data()
+
     def more_often_num(self, interf=True):
+        """
+        """
 
         more_often = {}
         for each in self.all_content:
@@ -106,6 +159,8 @@ class ParsePage(HTMLParser):
             print(el)
 
     def most_delay(self, interf=True):
+        """
+        """
 
         more_often = {}
         for num in range(1,81):
@@ -141,6 +196,8 @@ class ParsePage(HTMLParser):
             print (']')
 
     def rule_3_by_2(self, interf=True):
+        """
+        """
 
         even_odd = {"e0xo5": 0, "e1xo4": 0, "e2xo3": 0, "e3xo2": 0, "e4xo1": 0, "e5xo0": 0}
         total = 0
@@ -177,6 +234,8 @@ class ParsePage(HTMLParser):
         print('Total Raffles: ' + str(total))
 
     def more_often_dozen (self, interf=True):
+        """
+        """
 
         doze = {"0x": 0, "1x": 0, "2x": 0, "3x": 0, "4x": 0, "5x": 0, "6x": 0, "7x": 0, "8x": 0}
         total = 0
@@ -216,6 +275,8 @@ class ParsePage(HTMLParser):
         print('Total Dozens: ' + str(total*5))
 
     def more_often_unit (self, interf=True):
+        """
+        """
 
         unit = {"x0": 0, "x1": 0, "x2": 0, "x3": 0, "x4": 0, "x5": 0, "x6": 0, "x7": 0, "x8": 0, "x9": 0}
         total = 0
@@ -257,6 +318,8 @@ class ParsePage(HTMLParser):
         print('Total Dozens: ' + str(total*5))
 
     def suggest_num(self, more_recently=True):
+        """
+        """
 
         more_often = self.more_often_num(interf=False)
         rule = self.rule_3_by_2(interf=False)
@@ -293,6 +356,8 @@ class ParsePage(HTMLParser):
         print(sorted_dict)
 
     def screen_interf (self):
+        """
+        """
         done = False
         
         while not done :
@@ -367,30 +432,11 @@ class ParsePage(HTMLParser):
             else :
                 print ("I don't understand the command " + cmd)
     
-def ret_unit(num):
-    return round((num/10)%1*10)
-
-def dozen(num):
-    return int((num/10)//1)
-
-def isodd(num):
-            return num & 1 and True or False
-
-def get_content ():
-    """
-    """
-    try:
-        with open('D_QUINA.HTM', encoding='latin-1') as data:
-            return (data.read())
-    
-    except IOError as err:
-        print ("File error: " + str(err))
-
-def teste ():
-    
-    p = ParsePage() 
-    p.feed(get_content())
-    p.screen_interf()
+    def full_data(self):
+        """
+        """
+        for el in self.all_content:
+            print(el)
 
 if __name__ == '__main__': teste()
 
