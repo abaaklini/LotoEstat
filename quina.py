@@ -119,90 +119,104 @@ class QuinaStats ():
     def __init__(self):
         """
         """
-
         p = ParsePage() 
         p.feed(get_content())
         self.all_content = p.get_full_data()
+        self.all_stat = []
+        self.init_stat_table()
+        self.even_odd = {"e0xo5": 0, "e1xo4": 0, "e2xo3": 0, "e3xo2": 0, "e4xo1": 0, "e5xo0": 0}
+        self.doze = {"0x": 0, "1x": 0, "2x": 0, "3x": 0, "4x": 0, "5x": 0, "6x": 0, "7x": 0, "8x": 0}
+        self.unit = {"x0": 0, "x1": 0, "x2": 0, "x3": 0, "x4": 0, "x5": 0, "x6": 0, "x7": 0, "x8": 0, "x9": 0}
 
-    def more_often_num(self, interf=True):
+    def init_stat_table(self):
         """
         """
+        for num in range(1,81):
+            self.all_stat.append({"More": 0, "Last": 0, "Average": 0, "Worst": 0})
 
-        more_often = {}
+    def print_full_data(self):
+        """
+        """
+        for el in self.all_content:
+            print(el)
+
+    def print_more_often_num(self):
+        """
+        """
+        li = []
+        for num in range(1,81):
+            li.append({'Freq': self.all_stat[num - 1]['More'], 'Num': num})
+
+        print(li.sort())
+
+    def more_often_num(self):
+        """
+        """
         for each in self.all_content:
             for el in each["Dozens"]:
-                if more_often.__contains__(el):
-                    more_often[el] += 1
-                else:
-                    more_often[el] = 1
+                self.all_stat[int(el)]['More'] += 1
 
+    def print_last_time(self):
+        """
+        """
+        pass
+
+    def last_time(self):
+        """
+        """
         ind = -1
-        for el in more_often:
+        for num in range(1,81):
             ind += 1
-            num = el
             reverted_list = self.all_content
             reverted_list.reverse()
             count = 0
             for rev_el in reverted_list:
                 if num in rev_el["Dozens"]:
-                    more_often[el] = (more_often[el],count)
+                    self.all_stat[num]['Last'] = count
                     break
                 else:
                     count += 1
 
-        sorted_dict = sorted(more_often.items(), key=operator.itemgetter(1), reverse=True)
-
-        if not interf:
-            return (more_often)
-
-        for el in sorted_dict:
-            print(el)
-
-    def most_delay(self, interf=True):
+    def print_most_delay(self):
         """
         """
+        pass
 
-        more_often = {}
+    def most_delay(self):
+        """
+        """
+        delay = []
         for num in range(1,81):
-            if num < 10:
-                el = '0' + str(num)
-            else:
-                el = str(num)
-            more_often[el] = {"Count": 0, "Average": 0, "Worst": 0, "Parts": 0}
+            delay[num] = {'Count': 0, 'Parts': 0, 'Average': 0, 'Worst': 0}
 
-        for each in self.all_content:
-            for num in range(1,81):
-                if num < 10:
+            for each in self.all_content:
+                if num < 10 and len(num) < 2:
                     el = '0' + str(num)
                 else:
                     el = str(num)
 
                 if el in each["Dozens"]:
-                    more_often[el]["Average"] +=  more_often[el]["Count"]
-                    more_often[el]["Parts"] += 1
-                    if more_often[el]["Count"] > more_often[el]["Worst"]:
-                        more_often[el]["Worst"] = more_often[el]["Count"]
-                    more_often[el]["Count"] = 0
+                    delay[num]["Average"] +=  delay[num]["Count"]
+                    delay[num]["Parts"] += 1
+                    if delay[num]["Count"] > delay[num]["Worst"]:
+                        delay[num]["Worst"] = delay[num]["Count"]
+                    delay[num]["Count"] = 0
                 else:
-                    more_often[el]["Count"] += 1
+                    delay[num]["Count"] += 1
 
-        if not interf:
-            return (more_often)
+            self.all_stat[num]['Average'] = delay[num]['Average'] / delay[num]['Parts']
+            self.all_stat[num]['Worst'] = delay[num]['Worst']
 
-        for el in more_often:
-            print ('[' + el + ':', end=' ')
-            print ("Average :" + str(round(more_often[el]["Average"]/more_often[el]["Parts"])), end=' ')
-            print ("Worst :" + str(more_often[el]["Worst"]), end=' ')
-            print (']')
 
-    def rule_3_by_2(self, interf=True):
+    def print_rule_3_by_2(self):
         """
         """
+        pass
 
-        even_odd = {"e0xo5": 0, "e1xo4": 0, "e2xo3": 0, "e3xo2": 0, "e4xo1": 0, "e5xo0": 0}
-        total = 0
+    def rule_3_by_2(self):
+        """
+        """
         for each in self.all_content:
-            total += 1
             even = 0
             odd = 0
             for el in each["Dozens"]:
@@ -210,112 +224,86 @@ class QuinaStats ():
                     odd += 1
                 else:
                     even += 1
+
             if even == 0 and odd == 5:
-                even_odd["e0xo5"] += 1
+                self.even_odd["e0xo5"] += 1
             elif even == 1 and odd == 4:
-                even_odd["e1xo4"] += 1
+                self.even_odd["e1xo4"] += 1
             elif even == 2 and odd == 3:
-                even_odd["e2xo3"] += 1
+                self.even_odd["e2xo3"] += 1
             elif even == 3 and odd == 2:
-                even_odd["e3xo2"] += 1
+                self.even_odd["e3xo2"] += 1
             elif even == 4 and odd == 1:
-                even_odd["e4xo1"] += 1
+                self.even_odd["e4xo1"] += 1
             elif even == 5 and odd == 0:
-                even_odd["e5xo0"] += 1
+                self.even_odd["e5xo0"] += 1
 
-        sorted_dict = sorted(even_odd.items(), key=operator.itemgetter(1), reverse=True)
-
-        if not interf:
-            return (even_odd)
-
-        for el in sorted_dict:
-            print(el) 
-
-        print('Total Raffles: ' + str(total))
-
-    def more_often_dozen (self, interf=True):
+    def print_more_often_dozen (self):
         """
         """
+        pass
 
-        doze = {"0x": 0, "1x": 0, "2x": 0, "3x": 0, "4x": 0, "5x": 0, "6x": 0, "7x": 0, "8x": 0}
-        total = 0
+    def more_often_dozen (self):
+        """
+        """
         for each in self.all_content:
-            total += 1
             d = 0
             for el in each["Dozens"]:
                 d = dozen(int(el))
 
                 if d == 0:
-                    doze["0x"] += 1
+                    self.doze["0x"] += 1
                 elif d == 1:
-                    doze["1x"] += 1
+                    self.doze["1x"] += 1
                 elif d == 2:
-                    doze["2x"] += 1
+                    self.doze["2x"] += 1
                 elif d == 3:
-                    doze["3x"] += 1
+                    self.doze["3x"] += 1
                 elif d == 4:
-                    doze["4x"] += 1
+                    self.doze["4x"] += 1
                 elif d == 5:
-                    doze["5x"] += 1
+                    self.doze["5x"] += 1
                 elif d == 6:
-                    doze["6x"] += 1
+                    self.doze["6x"] += 1
                 elif d == 7:
-                    doze["7x"] += 1
+                    self.doze["7x"] += 1
                 elif d == 8:
-                    doze["8x"] += 10 #Value modified due lack of dozens
+                    self.doze["8x"] += 10 #Value modified due lack of dozens
 
-        sorted_dict = sorted(doze.items(), key=operator.itemgetter(1), reverse=True)
 
-        if not interf:
-            return (doze)
-
-        for el in sorted_dict:
-            print(el) 
-
-        print('Total Dozens: ' + str(total*5))
-
-    def more_often_unit (self, interf=True):
+    def print_more_often_unit (self):
         """
         """
+        pass
 
-        unit = {"x0": 0, "x1": 0, "x2": 0, "x3": 0, "x4": 0, "x5": 0, "x6": 0, "x7": 0, "x8": 0, "x9": 0}
-        total = 0
+    def more_often_unit (self):
+        """
+        """
         for each in self.all_content:
-            total += 1
             d = 0
             for el in each["Dozens"]:
                 u = ret_unit(int(el))
 
                 if u == 0:
-                    unit["x0"] += 1
+                    self.unit["x0"] += 1
                 elif u == 1:
-                    unit["x1"] += 1
+                    self.unit["x1"] += 1
                 elif u == 2:
-                    unit["x2"] += 1
+                    self.unit["x2"] += 1
                 elif u == 3:
-                    unit["x3"] += 1
+                    self.unit["x3"] += 1
                 elif u == 4:
-                    unit["x4"] += 1
+                    self.unit["x4"] += 1
                 elif u == 5:
-                    unit["x5"] += 1
+                    self.unit["x5"] += 1
                 elif u == 6:
-                    unit["x6"] += 1
+                    self.unit["x6"] += 1
                 elif u == 7:
-                    unit["x7"] += 1
+                    self.unit["x7"] += 1
                 elif u == 8:
-                    unit["x8"] += 1
+                    self.unit["x8"] += 1
                 elif u == 9:
-                    unit["x9"] += 1
-
-        sorted_dict = sorted(unit.items(), key=operator.itemgetter(1), reverse=True)
-
-        if not interf:
-            return (unit)
-
-        for el in sorted_dict:
-            print(el) 
-
-        print('Total Dozens: ' + str(total*5))
+                    self.unit["x9"] += 1
 
     def suggest_num(self, more_recently=True):
         """
@@ -362,27 +350,28 @@ class QuinaStats ():
         
         while not done :
         
-            cmd = input("Enter a command (or help): ")
+            print ('')
+            print ('\033[92m' + "The following commands are available: " + '\033[0m')
+            print ('')
+            print ("show : show all data in memory.")
+            print ("rule : show the most common combination of even and odds")
+            print ("doze : show the most common dozens over all raffles")
+            print ("unit : show the most common units over all raffles")
+            print ("more : show the numbers more often arises.")
+            print ("look : look up for a given group of 5 dozens.")
+            print ("sugm : Suggest the numbers with best statistics and arises more recently")
+            print ("sugl : Suggest the numbers with best statistics and arises less recently")
+            print ("dlay : show the worst delay between raffles")
+            print ("done : exit the program")
+            print ('')
+            cmd = input('\033[92m' + "Enter a command: " + '\033[0m')
+            print ('')
 
-            if cmd == "help" :
-                print ("The following commands are available: ")
-                print ("show : show all data in memory.")
-                print ("rule : show the most common combination of even and odds")
-                print ("doze : show the most common dozens over all raffles")
-                print ("unit : show the most common units over all raffles")
-                print ("more : show the numbers more often arises.")
-                print ("look : look up for a given group of 5 dozens.")
-                print ("sugm : Suggest the numbers with best statistics and arises more recently")
-                print ("sugl : Suggest the numbers with best statistics and arises less recently")
-                print ("dlay : show the worst delay between raffles")
-                print ("help : show the command list")
-                print ("done : exit the program")
-        
-            elif cmd == "more":
-                self.more_often_num()
+            if cmd == "more":
+                self.print_more_often_num()
 
             elif cmd == "show" :
-                self.full_data()
+                self.print_full_data()
     
             elif cmd == "rule":
                 self.rule_3_by_2()
@@ -432,11 +421,6 @@ class QuinaStats ():
             else :
                 print ("I don't understand the command " + cmd)
     
-    def full_data(self):
-        """
-        """
-        for el in self.all_content:
-            print(el)
 
 if __name__ == '__main__': teste()
 
