@@ -11,13 +11,13 @@
         - DONE suggest great numbers based on this statistics
         - DONE create a local Mercurial repository on a Dropbox folder;
         - DONE clean up the ParserPage class, striping the methods that dont belog to it;
+        - store database in a pickle file or JSON file;
         - create unit test;
         - create package;
         - adapt to Mega-Sena
         - adapt to Dupla-Sena
         - adapt to Lotomania
         - adapt to Lotofacil
-        - store database in a pickle file or JSON file;
         - standardize names like Python Style Standard (PEP8?)
         - group common code in functions;
         - uses NCurses;
@@ -63,7 +63,6 @@ def teste ():
     """
     quina = QuinaStats()
     quina.screen_interf()
-
 
 class ParsePage(HTMLParser): 
     """
@@ -128,12 +127,27 @@ class QuinaStats ():
         self.doze = {"0x": 0, "1x": 0, "2x": 0, "3x": 0, "4x": 0, "5x": 0, "6x": 0, "7x": 0, "8x": 0}
         self.unit = {"x0": 0, "x1": 0, "x2": 0, "x3": 0, "x4": 0, "x5": 0, "x6": 0, "x7": 0, "x8": 0, "x9": 0}
         self.more_often_num()
+        self.last_time()
+        self.most_delay()
+        self.rule_3_by_2()
+        self.more_often_dozen()
+        self.more_often_unit()
 
     def init_stat_table(self):
         """
         """
         for num in range(1,81):
             self.all_stat.append({"More": 0, "Last": 0, "Average": 0, "Worst": 0})
+
+    def prepare_to_print(self, key):
+        """
+        """
+        di ={} 
+        for num in range(1,81):
+            di[str(num)] = self.all_stat[num - 1][key]
+    
+        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
+        print(sorted_list)
 
     def print_full_data(self):
         """
@@ -144,12 +158,7 @@ class QuinaStats ():
     def print_more_often_num(self):
         """
         """
-        di ={} 
-        for num in range(1,81):
-            di[num] = self.all_stat[num - 1]['More']
-
-        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
-        print(sorted_list)
+        self.prepare_to_print('More')
 
     def more_often_num(self):
         """
@@ -161,59 +170,69 @@ class QuinaStats ():
     def print_last_time(self):
         """
         """
-        pass
+        self.prepare_to_print('Last')
 
     def last_time(self):
         """
         """
-        ind = -1
+        reverted_list = []
+        reverted_list.extend(self.all_content)
+        reverted_list.reverse()
         for num in range(1,81):
-            ind += 1
-            reverted_list = self.all_content
-            reverted_list.reverse()
+            if num < 10:
+                el = '0' + str(num)
+            else:
+                el = str(num)
             count = 0
             for rev_el in reverted_list:
-                if num in rev_el["Dozens"]:
-                    self.all_stat[num]['Last'] = count
+                if el in rev_el["Dozens"]:
+                    self.all_stat[num - 1]['Last'] = count
                     break
                 else:
                     count += 1
 
-    def print_most_delay(self):
+    def print_most_delay_average(self):
         """
         """
-        pass
+        self.prepare_to_print('Average')
+
+    def print_most_delay_worst(self):
+        """
+        """
+        self.prepare_to_print('Worst')
 
     def most_delay(self):
         """
         """
         delay = []
         for num in range(1,81):
-            delay[num] = {'Count': 0, 'Parts': 0, 'Average': 0, 'Worst': 0}
+            delay.append({'Count': 0, 'Parts': 0, 'Average': 0, 'Worst': 0})
 
             for each in self.all_content:
-                if num < 10 and len(num) < 2:
+                if num < 10:
                     el = '0' + str(num)
                 else:
                     el = str(num)
 
                 if el in each["Dozens"]:
-                    delay[num]["Average"] +=  delay[num]["Count"]
-                    delay[num]["Parts"] += 1
-                    if delay[num]["Count"] > delay[num]["Worst"]:
-                        delay[num]["Worst"] = delay[num]["Count"]
-                    delay[num]["Count"] = 0
+                    delay[num - 1]["Average"] +=  delay[num - 1]["Count"]
+                    delay[num - 1]["Parts"] += 1
+                    if delay[num - 1]["Count"] > delay[num - 1]["Worst"]:
+                        delay[num - 1]["Worst"] = delay[num - 1]["Count"]
+                    delay[num - 1]["Count"] = 0
                 else:
-                    delay[num]["Count"] += 1
+                    delay[num - 1]["Count"] += 1
 
-            self.all_stat[num]['Average'] = delay[num]['Average'] / delay[num]['Parts']
-            self.all_stat[num]['Worst'] = delay[num]['Worst']
+            self.all_stat[num - 1]['Average'] = round(delay[num - 1]['Average'] / delay[num - 1]['Parts'])
+            self.all_stat[num - 1]['Worst'] = delay[num - 1]['Worst']
 
 
     def print_rule_3_by_2(self):
         """
         """
-        pass
+        sorted_list = sorted(self.even_odd.items(), key=operator.itemgetter(1), reverse=True)
+        for each in sorted_list:
+            print(each)
 
     def rule_3_by_2(self):
         """
@@ -243,7 +262,9 @@ class QuinaStats ():
     def print_more_often_dozen (self):
         """
         """
-        pass
+        sorted_list = sorted(self.doze.items(), key=operator.itemgetter(1), reverse=True)
+        for each in sorted_list:
+            print(each)
 
     def more_often_dozen (self):
         """
@@ -276,7 +297,9 @@ class QuinaStats ():
     def print_more_often_unit (self):
         """
         """
-        pass
+        sorted_list = sorted(self.unit.items(), key=operator.itemgetter(1), reverse=True)
+        for each in sorted_list:
+            print(each)
 
     def more_often_unit (self):
         """
@@ -307,6 +330,32 @@ class QuinaStats ():
                 elif u == 9:
                     self.unit["x9"] += 1
 
+    def look_up_num(self):
+        """
+        """
+        print ('Enter with 5 numbers:')
+        dozens = []
+        for el in range(5):
+            num = input('Dozen number ' + str(el + 1) + ':')
+            if int(num) < 10 and len(num) < 2:
+                num = '0' + str(num)
+            else:
+                num = str(num)
+            dozens.append(num)
+        dozens.sort()
+
+        founded = False
+        for each in self.all_content:
+            if dozens == each["Dozens"]:
+                founded = True
+                print ('Dozens founded :')
+                print ('Date : ' + each['Date'])
+                print ('Accumulated : ' + each['Accumulated'])
+
+        if not founded:
+            # TODO: Test the numbers with the statistics
+            print ('Dozens not founded')
+            
     def suggest_num(self, more_recently=True):
         """
         """
@@ -355,16 +404,18 @@ class QuinaStats ():
             print ('')
             print ('\033[92m' + "The following commands are available: " + '\033[0m')
             print ('')
-            print ("show : show all data in memory.")
-            print ("rule : show the most common combination of even and odds")
-            print ("doze : show the most common dozens over all raffles")
-            print ("unit : show the most common units over all raffles")
-            print ("more : show the numbers more often arises.")
-            print ("look : look up for a given group of 5 dozens.")
-            print ("sugm : Suggest the numbers with best statistics and arises more recently")
-            print ("sugl : Suggest the numbers with best statistics and arises less recently")
-            print ("dlay : show the worst delay between raffles")
+            print ("aver : show the average delay between raffles")
             print ("done : exit the program")
+            print ("doze : show the most common dozens over all raffles")
+            print ("last : show the last time a numbers arises.")
+            print ("look : look up for a given group of 5 dozens.")
+            print ("more : show the numbers more often arises.")
+            print ("rule : show the most common combination of even and odds")
+            print ("show : show all data in memory.")
+            print ("sugl : Suggest the numbers with best statistics and arises less recently")
+            print ("sugm : Suggest the numbers with best statistics and arises more recently")
+            print ("unit : show the most common units over all raffles")
+            print ("wors : show the worst delay between raffles")
             print ('')
             cmd = input('\033[92m' + "Enter a command: " + '\033[0m')
             print ('')
@@ -372,50 +423,35 @@ class QuinaStats ():
             if cmd == "more":
                 self.print_more_often_num()
 
+            elif cmd == "last" :
+                self.print_last_time()
+
+            elif cmd == "aver" :
+                self.print_most_delay_average()
+
+            elif cmd == "wors" :
+                self.print_most_delay_worst()
+
             elif cmd == "show" :
                 self.print_full_data()
     
             elif cmd == "rule":
-                self.rule_3_by_2()
+                self.print_rule_3_by_2()
 
             elif cmd == "doze":
-                self.more_often_dozen()
+                self.print_more_often_dozen()
 
             elif cmd == "unit":
-                self.more_often_unit()
+                self.print_more_often_unit()
 
             elif cmd == "look" :
-                print ('Enter with 5 numbers:')
-                dozens = []
-                for el in range(5):
-                    num = input('Dozen number ' + str(el + 1) + ':')
-                    if int(num) < 10 and len(num) < 2:
-                        num = '0' + str(num)
-                    else:
-                        num = str(num)
-                    dozens.append(num)
-                dozens.sort()
-
-                founded = False
-                for each in self.all_content:
-                    if dozens == each["Dozens"]:
-                        founded = True
-                        print ('Dozens founded :')
-                        print ('Date : ' + each['Date'])
-                        print ('Accumulated : ' + each['Accumulated'])
-
-                if not founded:
-                    # TODO: Test the numbers with the statistics
-                    print ('Dozens not founded')
+                self.look_up_num()
 
             elif cmd == "sugm":
                 self.suggest_num()
 
             elif cmd == "sugl":
                 self.suggest_num(more_recently=False)
-
-            elif cmd == "dlay":
-                self.most_delay()
 
             elif cmd == "done" :
                 done = True
