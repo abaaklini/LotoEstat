@@ -11,7 +11,8 @@
         - DONE suggest great numbers based on this statistics
         - DONE create a local Mercurial repository on a Dropbox folder;
         - DONE clean up the ParserPage class, striping the methods that dont belog to it;
-        - store database in a pickle file or JSON file;
+        - DONE FOR PICKLE store database in a pickle file or JSON file;
+        - DONE group common code in functions;
         - create unit test;
         - create package;
         - adapt to Mega-Sena
@@ -19,7 +20,6 @@
         - adapt to Lotomania
         - adapt to Lotofacil
         - standardize names like Python Style Standard (PEP8?)
-        - group common code in functions;
         - uses NCurses;
         - uses i18n;
         - upload to pyPI;
@@ -32,6 +32,8 @@
 from html.parser import HTMLParser 
 import pdb
 import operator
+import os
+import pickle
 
 def ret_unit(num):
     """
@@ -51,6 +53,7 @@ def isodd(num):
 def get_content ():
     """
     """
+
     try:
         with open('D_QUINA.HTM', encoding='latin-1') as data:
             return (data.read())
@@ -58,7 +61,7 @@ def get_content ():
     except IOError as err:
         print ("File error: " + str(err))
 
-def teste ():
+def test ():
     """
     """
     quina = QuinaStats()
@@ -118,9 +121,27 @@ class QuinaStats ():
     def __init__(self):
         """
         """
-        p = ParsePage() 
-        p.feed(get_content())
-        self.all_content = p.get_full_data()
+
+        if os.path.exists('quina.pickle'):
+            if os.path.getmtime('quina.pickle') > os.path.getmtime('D_QUINA.HTM'):
+                try:
+                    with open('quina.pickle', 'rb') as data_bin:
+                        self.all_content = pickle.load(data_bin)
+
+                except IOError as err:
+                    print ("File error: " + str(err))
+
+        else:
+            p = ParsePage() 
+            p.feed(get_content())
+            self.all_content = p.get_full_data()
+            try:
+                with open('quina.pickle', 'wb') as data_bin:
+                    pickle.dump(self.all_content, data_bin)
+    
+            except IOError as err:
+                print ("File error: " + str(err))
+
         self.all_stat = []
         self.init_stat_table()
         self.even_odd = {"e0xo5": 0, "e1xo4": 0, "e2xo3": 0, "e3xo2": 0, "e4xo1": 0, "e5xo0": 0}
@@ -144,7 +165,11 @@ class QuinaStats ():
         """
         di ={} 
         for num in range(1,81):
-            di[str(num)] = self.all_stat[num - 1][key]
+            if num < 10:
+                el = '0' + str(num)
+            else:
+                el = str(num)
+            di[str(el)] = self.all_stat[num - 1][key]
     
         sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
         print(sorted_list)
@@ -360,39 +385,34 @@ class QuinaStats ():
         """
         """
 
-        more_often = self.more_often_num(interf=False)
-        rule = self.rule_3_by_2(interf=False)
-        dozen_dict = self.more_often_dozen(interf=False)
-        unit_dict = self.more_often_unit(interf=False)
-
         result = {}
-        for el in more_often:
-            if more_recently:
-                result[el] = more_often[el][0]*2 - more_often[el][1]# Weight 2
-            else:
-                result[el] = more_often[el][0]*2 + more_often[el][1]# Weight 2
-
         st = 'x'
-        for el in result:
-            doz = dozen(int(el))
-            result[el] += dozen_dict[str(doz)+st]/2 #Weight 1/2
+        for num in range(1,81):
+            if num < 10:
+                el = '0' + str(num)
+            else:
+                el = str(num)
 
-        for el in result:
-            uni = ret_unit(int(el))
-            result[el] += unit_dict[st+str(uni)]/2 #Weight 1/2
+            if more_recently:
+                result[el] = self.all_stat[num - 1]['More']*2 - self.all_stat[num - 1]['Last'] # Weight 2
+            else:
+                result[el] = self.all_stat[num - 1]['More']*2 + self.all_stat[num - 1]['Last'] # Weight 2
+
+            doz = dozen(num)
+            result[el] += self.doze[str(doz)+st]/2 #Weight 1/2
+
+            uni = ret_unit(num)
+            result[el] += self.unit[st+str(uni)]/2 #Weight 1/2
 
         print('##################### MORE OFTEN #####################')
-        sorted_dict = sorted(more_often.items(), key=operator.itemgetter(1), reverse=True)
-        print(sorted_dict)
+        self.print_more_often_num()
         print('################## MORE OFTEN DOZENS #####################')
-        sorted_dict = sorted(dozen_dict.items(), key=operator.itemgetter(1), reverse=True)
-        print(sorted_dict)
+        self.print_more_often_dozen()
         print('################## MORE OFTEN UNITS #####################')
-        sorted_dict = sorted(unit_dict.items(), key=operator.itemgetter(1), reverse=True)
-        print(sorted_dict)
+        self.print_more_often_unit()
         print('################# SUGGESTED NUMBERS #####################')
-        sorted_dict = sorted(result.items(), key=operator.itemgetter(1), reverse=True)
-        print(sorted_dict)
+        sorted_list = sorted(result.items(), key=operator.itemgetter(1), reverse=True)
+        print(sorted_list)
 
     def screen_interf (self):
         """
@@ -460,6 +480,6 @@ class QuinaStats ():
                 print ("I don't understand the command " + cmd)
     
 
-if __name__ == '__main__': teste()
+if __name__ == '__main__': test()
 
 
