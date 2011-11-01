@@ -13,6 +13,14 @@
         - DONE clean up the ParserPage class, striping the methods that dont belog to it;
         - DONE FOR PICKLE store database in a pickle file or JSON file;
         - DONE group common code in functions;
+        - NOT DONED Implement Fatorial function. Use math.factorial();
+        - Find the average a number arise; ("More")
+        - Find the deviation by de media; ("More")
+        - Positioning the number in the quartiles; ("More")
+        - Find the average a number delay; ("Delay")
+        - Find the deviation by de media; ("Delay")
+        - Positioning the number in the quartiles; ("Delay")
+        - Calculate the probabilitty of a number been raffled, based upon it's score;("Sugm/Sugl")
         - create unit test;
         - create package;
         - adapt to Mega-Sena
@@ -53,7 +61,6 @@ def isodd(num):
 def get_content ():
     """
     """
-
     try:
         with open('D_QUINA.HTM', encoding='latin-1') as data:
             return (data.read())
@@ -70,7 +77,6 @@ def test ():
 class ParsePage(HTMLParser): 
     """
     """
-
     def __init__(self):
         """
         """
@@ -130,7 +136,6 @@ class QuinaStats ():
 
                 except IOError as err:
                     print ("File error: " + str(err))
-
         else:
             p = ParsePage() 
             p.feed(get_content())
@@ -138,7 +143,7 @@ class QuinaStats ():
             try:
                 with open('quina.pickle', 'wb') as data_bin:
                     pickle.dump(self.all_content, data_bin)
-    
+
             except IOError as err:
                 print ("File error: " + str(err))
 
@@ -170,7 +175,7 @@ class QuinaStats ():
             else:
                 el = str(num)
             di[str(el)] = self.all_stat[num - 1][key]
-    
+
         sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
         print(sorted_list)
 
@@ -251,7 +256,6 @@ class QuinaStats ():
             self.all_stat[num - 1]['Average'] = round(delay[num - 1]['Average'] / delay[num - 1]['Parts'])
             self.all_stat[num - 1]['Worst'] = delay[num - 1]['Worst']
 
-
     def print_rule_3_by_2(self):
         """
         """
@@ -318,7 +322,6 @@ class QuinaStats ():
                 elif d == 8:
                     self.doze["8x"] += 10 #Value modified due lack of dozens
 
-
     def print_more_often_unit (self):
         """
         """
@@ -380,7 +383,7 @@ class QuinaStats ():
         if not founded:
             # TODO: Test the numbers with the statistics
             print ('Dozens not founded')
-            
+
     def suggest_num(self, more_recently=True):
         """
         """
