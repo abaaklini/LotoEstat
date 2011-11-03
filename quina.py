@@ -14,6 +14,7 @@
         - DONE FOR PICKLE store database in a pickle file or JSON file;
         - DONE group common code in functions;
         - NOT DONED Implement Fatorial function. Use math.factorial();
+        - Choose a better structure for memory data;
         - Find the average a number arise; ("More")
         - Find the deviation by de media; ("More")
         - Positioning the number in the quartiles; ("More")
@@ -163,7 +164,7 @@ class QuinaStats ():
         """
         """
         for num in range(1,81):
-            self.all_stat.append({"More": 0, "Last": 0, "Average": 0, "Worst": 0})
+            self.all_stat.append({"More": 0, "Last": 0, "Average": 0, "Worst": 0, "Occur": [], 'Delay': []})
 
     def prepare_to_print(self, key):
         """
@@ -185,6 +186,19 @@ class QuinaStats ():
         for el in self.all_content:
             print(el)
 
+    def print_occurency(self):
+        """
+        """
+        di ={} 
+        for num in range(1,81):
+            if num < 10:
+                el = '0' + str(num)
+            else:
+                el = str(num)
+            di[str(el)] = self.all_stat[num - 1]['Occur']
+
+        print(di)
+
     def print_more_often_num(self):
         """
         """
@@ -195,7 +209,10 @@ class QuinaStats ():
         """
         for each in self.all_content:
             for el in each["Dozens"]:
-                self.all_stat[int(el) - 1]['More'] += 1
+                self.all_stat[int(el) - 1]['Occur'].append(int(each['Number']))
+
+        for num in range(1,81):
+            self.all_stat[num - 1]['More'] = len(self.all_stat[num - 1]['Occur'])
 
     def print_last_time(self):
         """
@@ -205,21 +222,8 @@ class QuinaStats ():
     def last_time(self):
         """
         """
-        reverted_list = []
-        reverted_list.extend(self.all_content)
-        reverted_list.reverse()
         for num in range(1,81):
-            if num < 10:
-                el = '0' + str(num)
-            else:
-                el = str(num)
-            count = 0
-            for rev_el in reverted_list:
-                if el in rev_el["Dozens"]:
-                    self.all_stat[num - 1]['Last'] = count
-                    break
-                else:
-                    count += 1
+            self.all_stat[num - 1]['Last'] = int(self.all_content[-1]['Number']) - self.all_stat[num - 1]['Occur'][-1] - 1
 
     def print_most_delay_average(self):
         """
@@ -234,28 +238,13 @@ class QuinaStats ():
     def most_delay(self):
         """
         """
-        delay = []
-        for num in range(1,81):
-            delay.append({'Count': 0, 'Parts': 0, 'Average': 0, 'Worst': 0})
+        for el in self.all_stat:
+            for val in range(1, len(el['Occur'])):
+                el['Delay'].append( el['Occur'][val] - el['Occur'][val - 1] - 1)
 
-            for each in self.all_content:
-                if num < 10:
-                    el = '0' + str(num)
-                else:
-                    el = str(num)
-
-                if el in each["Dozens"]:
-                    delay[num - 1]["Average"] +=  delay[num - 1]["Count"]
-                    delay[num - 1]["Parts"] += 1
-                    if delay[num - 1]["Count"] > delay[num - 1]["Worst"]:
-                        delay[num - 1]["Worst"] = delay[num - 1]["Count"]
-                    delay[num - 1]["Count"] = 0
-                else:
-                    delay[num - 1]["Count"] += 1
-
-            self.all_stat[num - 1]['Average'] = round(delay[num - 1]['Average'] / delay[num - 1]['Parts'])
-            self.all_stat[num - 1]['Worst'] = delay[num - 1]['Worst']
-
+            el['Worst'] = max(el['Delay'])
+            el['Average'] = round(sum(el['Delay'])/len(el['Delay']))
+        
     def print_rule_3_by_2(self):
         """
         """
@@ -433,6 +422,7 @@ class QuinaStats ():
             print ("last : show the last time a numbers arises.")
             print ("look : look up for a given group of 5 dozens.")
             print ("more : show the numbers more often arises.")
+            print ("occu : print the list of occurency of a number during the raffles.")
             print ("rule : show the most common combination of even and odds")
             print ("show : show all data in memory.")
             print ("sugl : Suggest the numbers with best statistics and arises less recently")
@@ -475,6 +465,9 @@ class QuinaStats ():
 
             elif cmd == "sugl":
                 self.suggest_num(more_recently=False)
+
+            elif cmd == "occu" :
+                self.print_occurency()
 
             elif cmd == "done" :
                 done = True
