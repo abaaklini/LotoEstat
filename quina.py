@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#! /usr/bin/python
 # -*- coding: iso-8859-15 -*-
 """
     TODO: 
@@ -14,7 +14,7 @@
         - DONE FOR PICKLE store database in a pickle file or JSON file;
         - DONE group common code in functions;
         - NOT DONED Implement Fatorial function. Use math.factorial();
-        - Choose a better structure for memory data;
+        - DONE Choose a better structure for memory data;
         - Find the average a number arise; ("More")
         - Find the deviation by de media; ("More")
         - Positioning the number in the quartiles; ("More")
@@ -38,16 +38,18 @@
         - make the Web App in an Android App;
         - make money with it;
 """
-from html.parser import HTMLParser 
+import HTMLParser 
 import pdb
 import operator
 import os
 import pickle
+import matplotlib.pyplot as plt
+import math
 
 def ret_unit(num):
     """
     """
-    return round((num/10)%1*10)
+    return int(round(math.fmod((float(num)/10.0),1)*10))
 
 def dozen(num):
     """
@@ -63,7 +65,7 @@ def get_content ():
     """
     """
     try:
-        with open('D_QUINA.HTM', encoding='latin-1') as data:
+        with open('D_QUINA.HTM') as data:
             return (data.read())
     
     except IOError as err:
@@ -75,13 +77,13 @@ def test ():
     quina = QuinaStats()
     quina.screen_interf()
 
-class ParsePage(HTMLParser): 
+class ParsePage(HTMLParser.HTMLParser): 
     """
     """
     def __init__(self):
         """
         """
-        HTMLParser.__init__(self)
+        HTMLParser.HTMLParser.__init__(self)
         self.inside_td = False
         self.counter = 0
         self.raffle = {"Number": 0, "Date": "00/00/00",  "Dozens": [], "Accumulated": 'Não'}
@@ -151,8 +153,8 @@ class QuinaStats ():
         self.all_stat = []
         self.init_stat_table()
         self.even_odd = {"e0xo5": [], "e1xo4": [], "e2xo3": [], "e3xo2": [], "e4xo1": [], "e5xo0": []}
-        self.doze = {"0x": 0, "1x": 0, "2x": 0, "3x": 0, "4x": 0, "5x": 0, "6x": 0, "7x": 0, "8x": 0}
-        self.unit = {"x0": 0, "x1": 0, "x2": 0, "x3": 0, "x4": 0, "x5": 0, "x6": 0, "x7": 0, "x8": 0, "x9": 0}
+        self.doze = {"0x": [], "1x": [], "2x": [], "3x": [], "4x": [], "5x": [], "6x": [], "7x": [], "8x": []}
+        self.unit = {"x0": [], "x1": [], "x2": [], "x3": [], "x4": [], "x5": [], "x6": [], "x7": [], "x8": [], "x9": []}
         self.more_often_num()
         self.last_time()
         self.most_delay()
@@ -186,24 +188,6 @@ class QuinaStats ():
         for el in self.all_content:
             print(el)
 
-    def print_occurency(self):
-        """
-        """
-        di ={} 
-        for num in range(1,81):
-            if num < 10:
-                el = '0' + str(num)
-            else:
-                el = str(num)
-            di[str(el)] = self.all_stat[num - 1]['Occur']
-
-        print(di)
-
-    def print_more_often_num(self):
-        """
-        """
-        self.prepare_to_print('More')
-
     def more_often_num(self):
         """
         """
@@ -214,26 +198,11 @@ class QuinaStats ():
         for num in range(1,81):
             self.all_stat[num - 1]['More'] = len(self.all_stat[num - 1]['Occur'])
 
-    def print_last_time(self):
-        """
-        """
-        self.prepare_to_print('Last')
-
     def last_time(self):
         """
         """
         for num in range(1,81):
-            self.all_stat[num - 1]['Last'] = int(self.all_content[-1]['Number']) - self.all_stat[num - 1]['Occur'][-1] - 1
-
-    def print_most_delay_average(self):
-        """
-        """
-        self.prepare_to_print('Average')
-
-    def print_most_delay_worst(self):
-        """
-        """
-        self.prepare_to_print('Worst')
+            self.all_stat[num - 1]['Last'] = int(self.all_content[-1]['Number']) - self.all_stat[num - 1]['Occur'][-1]
 
     def most_delay(self):
         """
@@ -243,7 +212,7 @@ class QuinaStats ():
                 el['Delay'].append( el['Occur'][val] - el['Occur'][val - 1] - 1)
 
             el['Worst'] = max(el['Delay'])
-            el['Average'] = round(sum(el['Delay'])/len(el['Delay']))
+            el['Average'] = sum(el['Delay'])/len(el['Delay'])
         
     def print_rule_3_by_2(self):
         """
@@ -287,7 +256,17 @@ class QuinaStats ():
     def print_more_often_dozen (self):
         """
         """
-        sorted_list = sorted(self.doze.items(), key=operator.itemgetter(1), reverse=True)
+        di = {'0x': len(self.doze['0x']),
+              '1x': len(self.doze['1x']),
+              '2x': len(self.doze['2x']),
+              '3x': len(self.doze['3x']),
+              '4x': len(self.doze['4x']),
+              '5x': len(self.doze['5x']),
+              '6x': len(self.doze['6x']),
+              '7x': len(self.doze['7x']),
+              '8x': len(self.doze['8x'])}
+
+        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
         for each in sorted_list:
             print(each)
 
@@ -296,32 +275,43 @@ class QuinaStats ():
         """
         for each in self.all_content:
             d = 0
-            for el in each["Dozens"]:
+            for el in each['Dozens']:
                 d = dozen(int(el))
 
                 if d == 0:
-                    self.doze["0x"] += 1
-                elif d == 1:
-                    self.doze["1x"] += 1
-                elif d == 2:
-                    self.doze["2x"] += 1
-                elif d == 3:
-                    self.doze["3x"] += 1
-                elif d == 4:
-                    self.doze["4x"] += 1
-                elif d == 5:
-                    self.doze["5x"] += 1
-                elif d == 6:
-                    self.doze["6x"] += 1
-                elif d == 7:
-                    self.doze["7x"] += 1
-                elif d == 8:
-                    self.doze["8x"] += 10 #Value modified due lack of dozens
+                    self.doze['0x'].append(int(each['Number']))
+                elif d == 1:       
+                    self.doze['1x'].append(int(each['Number']))
+                elif d == 2:       
+                    self.doze['2x'].append(int(each['Number']))
+                elif d == 3:       
+                    self.doze['3x'].append(int(each['Number']))
+                elif d == 4:       
+                    self.doze['4x'].append(int(each['Number']))
+                elif d == 5:       
+                    self.doze['5x'].append(int(each['Number']))
+                elif d == 6:       
+                    self.doze['6x'].append(int(each['Number']))
+                elif d == 7:       
+                    self.doze['7x'].append(int(each['Number']))
+                elif d == 8:       
+                    self.doze['8x'].append(int(each['Number']))
 
     def print_more_often_unit (self):
         """
         """
-        sorted_list = sorted(self.unit.items(), key=operator.itemgetter(1), reverse=True)
+        di = {'x0': len(self.unit['x0']),
+              'x1': len(self.unit['x1']),
+              'x2': len(self.unit['x2']),
+              'x3': len(self.unit['x3']),
+              'x4': len(self.unit['x4']),
+              'x5': len(self.unit['x5']),
+              'x6': len(self.unit['x6']),
+              'x7': len(self.unit['x7']),
+              'x8': len(self.unit['x8']),
+              'x9': len(self.unit['x9'])}
+
+        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
         for each in sorted_list:
             print(each)
 
@@ -330,29 +320,29 @@ class QuinaStats ():
         """
         for each in self.all_content:
             d = 0
-            for el in each["Dozens"]:
+            for el in each['Dozens']:
                 u = ret_unit(int(el))
 
                 if u == 0:
-                    self.unit["x0"] += 1
-                elif u == 1:
-                    self.unit["x1"] += 1
-                elif u == 2:
-                    self.unit["x2"] += 1
-                elif u == 3:
-                    self.unit["x3"] += 1
-                elif u == 4:
-                    self.unit["x4"] += 1
-                elif u == 5:
-                    self.unit["x5"] += 1
-                elif u == 6:
-                    self.unit["x6"] += 1
-                elif u == 7:
-                    self.unit["x7"] += 1
-                elif u == 8:
-                    self.unit["x8"] += 1
-                elif u == 9:
-                    self.unit["x9"] += 1
+                    self.unit['x0'].append(int(each['Number']))
+                elif u == 1:                                  
+                    self.unit['x1'].append(int(each['Number']))
+                elif u == 2:                                  
+                    self.unit['x2'].append(int(each['Number']))
+                elif u == 3:                                  
+                    self.unit['x3'].append(int(each['Number']))
+                elif u == 4:                                  
+                    self.unit['x4'].append(int(each['Number']))
+                elif u == 5:                                  
+                    self.unit['x5'].append(int(each['Number']))
+                elif u == 6:                                  
+                    self.unit['x6'].append(int(each['Number']))
+                elif u == 7:                                  
+                    self.unit['x7'].append(int(each['Number']))
+                elif u == 8:                                  
+                    self.unit['x8'].append(int(each['Number']))
+                elif u == 9:       
+                    self.unit['x9'].append(int(each['Number']))
 
     def look_up_num(self):
         """
@@ -377,7 +367,7 @@ class QuinaStats ():
                 print ('Accumulated : ' + each['Accumulated'])
 
         if not founded:
-            # TODO: Test the numbers with the statistics
+            # TODO: Test the numbers with/against the statistics
             print ('Dozens not founded')
 
     def suggest_num(self, more_recently=True):
@@ -398,13 +388,13 @@ class QuinaStats ():
                 result[el] = self.all_stat[num - 1]['More']*2 + self.all_stat[num - 1]['Last'] # Weight 2
 
             doz = dozen(num)
-            result[el] += self.doze[str(doz)+st]/2 #Weight 1/2
+            result[el] += len(self.doze[str(doz)+st])/2 #Weight 1/2
 
             uni = ret_unit(num)
-            result[el] += self.unit[st+str(uni)]/2 #Weight 1/2
+            result[el] += len(self.unit[st+str(uni)])/2 #Weight 1/2
 
         print('##################### MORE OFTEN #####################')
-        self.print_more_often_num()
+        self.prepare_to_print('More')
         print('################## MORE OFTEN DOZENS #####################')
         self.print_more_often_dozen()
         print('################## MORE OFTEN UNITS #####################')
@@ -412,6 +402,13 @@ class QuinaStats ():
         print('################# SUGGESTED NUMBERS #####################')
         sorted_list = sorted(result.items(), key=operator.itemgetter(1), reverse=True)
         print(sorted_list)
+
+    def show_plot (self):
+        """
+        """
+        plt.figure()
+        plt.show()
+
 
     def screen_interf (self):
         """
@@ -429,7 +426,7 @@ class QuinaStats ():
             print ("last : show the last time a numbers arises.")
             print ("look : look up for a given group of 5 dozens.")
             print ("more : show the numbers more often arises.")
-            print ("occu : print the list of occurency of a number during the raffles.")
+            print ("occu : print the list of occurrence of a number during the raffles.")
             print ("rule : show the most common combination of even and odds")
             print ("show : show all data in memory.")
             print ("sugl : Suggest the numbers with best statistics and arises less recently")
@@ -437,48 +434,66 @@ class QuinaStats ():
             print ("unit : show the most common units over all raffles")
             print ("wors : show the worst delay between raffles")
             print ('')
-            cmd = input('\033[92m' + "Enter a command: " + '\033[0m')
+            cmd = raw_input('\033[92m' + 'Enter a command: ' + '\033[0m')
             print ('')
 
-            if cmd == "more":
-                self.print_more_often_num()
+            if cmd == 'more' :
+                self.prepare_to_print('More')
 
-            elif cmd == "last" :
-                self.print_last_time()
+            elif cmd == 'last' :
+                self.prepare_to_print('Last')
 
-            elif cmd == "aver" :
-                self.print_most_delay_average()
+            elif cmd == 'aver' :
+                self.prepare_to_print('Average')
 
-            elif cmd == "wors" :
-                self.print_most_delay_worst()
+            elif cmd == 'wors' :
+                self.prepare_to_print('Worst')
 
-            elif cmd == "show" :
+            elif cmd == 'show' :
                 self.print_full_data()
     
-            elif cmd == "rule":
+            elif cmd == 'rule' :
                 self.print_rule_3_by_2()
 
-            elif cmd == "doze":
+            elif cmd == 'doze' :
                 self.print_more_often_dozen()
 
-            elif cmd == "unit":
+            elif cmd == 'unit' :
                 self.print_more_often_unit()
 
-            elif cmd == "look" :
+            elif cmd == 'look' :
                 self.look_up_num()
 
-            elif cmd == "sugm":
+            elif cmd == 'sugm' :
                 self.suggest_num()
 
-            elif cmd == "sugl":
+            elif cmd == 'sugl' :
                 self.suggest_num(more_recently=False)
 
-            elif cmd == "occu" :
-                self.print_occurency()
+            elif cmd == 'occu' :
+                self.prepare_to_print('Occur')
 
-            elif cmd == "done" :
+            elif cmd == 'done' :
                 done = True
+
+            elif cmd == 'test' :
+                print('#### MORE ####')
+                self.prepare_to_print('More')
+                print('#### LAST ####')
+                self.prepare_to_print('Last')
+                print('#### DELAY AVERAGE####')
+                self.prepare_to_print('Average')
+                print('#### WORST DELAY ####')
+                self.prepare_to_print('Worst')
+                print('#### RULE 3 by 2 ####')
+                self.print_rule_3_by_2()
+                print('#### DOZE ####')
+                self.print_more_often_dozen()
+                print('#### UNIT ####')
+                self.print_more_often_unit()
         
+            elif cmd == 'plot' :
+                self.show_plot()
             else :
                 print ("I don't understand the command " + cmd)
     
