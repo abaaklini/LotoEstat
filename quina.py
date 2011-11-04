@@ -150,7 +150,7 @@ class QuinaStats ():
 
         self.all_stat = []
         self.init_stat_table()
-        self.even_odd = {"e0xo5": 0, "e1xo4": 0, "e2xo3": 0, "e3xo2": 0, "e4xo1": 0, "e5xo0": 0}
+        self.even_odd = {"e0xo5": [], "e1xo4": [], "e2xo3": [], "e3xo2": [], "e4xo1": [], "e5xo0": []}
         self.doze = {"0x": 0, "1x": 0, "2x": 0, "3x": 0, "4x": 0, "5x": 0, "6x": 0, "7x": 0, "8x": 0}
         self.unit = {"x0": 0, "x1": 0, "x2": 0, "x3": 0, "x4": 0, "x5": 0, "x6": 0, "x7": 0, "x8": 0, "x9": 0}
         self.more_often_num()
@@ -248,7 +248,14 @@ class QuinaStats ():
     def print_rule_3_by_2(self):
         """
         """
-        sorted_list = sorted(self.even_odd.items(), key=operator.itemgetter(1), reverse=True)
+        di = {'e0xo5': len(self.even_odd['e0xo5']),
+              'e1xo4': len(self.even_odd['e1xo4']),
+              'e2xo3': len(self.even_odd['e2xo3']),
+              'e3xo2': len(self.even_odd['e3xo2']),
+              'e4xo1': len(self.even_odd['e4xo1']),
+              'e5xo0': len(self.even_odd['e5xo0'])}
+
+        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
         for each in sorted_list:
             print(each)
 
@@ -265,17 +272,17 @@ class QuinaStats ():
                     even += 1
 
             if even == 0 and odd == 5:
-                self.even_odd["e0xo5"] += 1
+                self.even_odd["e0xo5"].append(int(each['Number']))
             elif even == 1 and odd == 4:
-                self.even_odd["e1xo4"] += 1
+                self.even_odd["e1xo4"].append(int(each['Number'])) 
             elif even == 2 and odd == 3:
-                self.even_odd["e2xo3"] += 1
+                self.even_odd["e2xo3"].append(int(each['Number'])) 
             elif even == 3 and odd == 2:
-                self.even_odd["e3xo2"] += 1
+                self.even_odd["e3xo2"].append(int(each['Number'])) 
             elif even == 4 and odd == 1:
-                self.even_odd["e4xo1"] += 1
+                self.even_odd["e4xo1"].append(int(each['Number'])) 
             elif even == 5 and odd == 0:
-                self.even_odd["e5xo0"] += 1
+                self.even_odd["e5xo0"].append(int(each['Number'])) 
 
     def print_more_often_dozen (self):
         """
