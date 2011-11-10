@@ -2,23 +2,10 @@
 # -*- coding: iso-8859-15 -*-
 """
     TODO: 
-        - DONE store the date on database.
-        - DONE show the last time a number was raffled;
-        - DONE show if a group of dozens has been raffle and in which date;
-        - DONE show the statistics for the 2X3 rule;
-        - DONE check which frequency a dozen arise (ex. 0x, 1x, 2x, 3x, ..., 80)
-        - DONE check which frequency a unit arise (ex. x0, x1, x2, x3, ..., x9))
-        - DONE suggest great numbers based on this statistics
-        - DONE create a local Mercurial repository on a Dropbox folder;
-        - DONE clean up the ParserPage class, striping the methods that dont belog to it;
-        - DONE FOR PICKLE store database in a pickle file or JSON file;
-        - DONE group common code in functions;
-        - NOT DONED Implement Fatorial function. Use math.factorial();
-        - DONE Choose a better structure for memory data;
+        - Fix the unicode problem on all_content
         - Find the average a number arise; ("More")
         - Find the deviation by de media; ("More")
         - Positioning the number in the quartiles; ("More")
-        - Find the average a number delay; ("Delay")
         - Find the deviation by de media; ("Delay")
         - Positioning the number in the quartiles; ("Delay")
         - Calculate the probabilitty of a number been raffled, based upon it's score;("Sugm/Sugl")
@@ -45,6 +32,8 @@ import os
 import pickle
 import matplotlib.pyplot as plt
 import math
+import codecs
+import numpy as np
 
 def ret_unit(num):
     """
@@ -65,7 +54,7 @@ def get_content ():
     """
     """
     try:
-        with open('D_QUINA.HTM') as data:
+        with codecs.open('D_QUINA.HTM', 'r', 'latin-1') as data:
             return (data.read())
     
     except IOError as err:
@@ -186,7 +175,30 @@ class QuinaStats ():
         """
         """
         for el in self.all_content:
-            print(el)
+            for k, v in el.items():
+                print(k + ':' + repr(v))
+
+    def plot_more_often(self):
+        """
+        """
+        num = int(raw_input('\033[92m' + 'Enter a number to plot (or 0 for none): ' + '\033[0m'))
+        if num == 0:
+            return
+
+        delay = []
+        aver = []
+        value = self.all_stat[num - 1]['Occur']
+        for ind in range(len(value) - 1):
+            delay.append(value[ind + 1] - value[ind])
+            aver.append(self.all_stat[num - 1]['Average'])
+
+        plt.plot(delay, label='Delay')
+        plt.plot(aver, label='Average') 
+        plt.title('Delay for number ' + str(num))
+        plt.xlabel('Times raffled')
+        plt.ylabel('Delay between raffles')
+        plt.legend()
+        plt.show()
 
     def more_often_num(self):
         """
@@ -214,6 +226,84 @@ class QuinaStats ():
             el['Worst'] = max(el['Delay'])
             el['Average'] = sum(el['Delay'])/len(el['Delay'])
         
+    def plot_rule (self):
+        """
+        """
+        done = False
+        
+        while not done :
+        
+            print ('')
+            print ('\033[92m' + "The following commands are available: " + '\033[0m')
+            print ('')
+            print ("pie   : show the data plotted on a pie chart")
+            print ("bar   : show the data plotted on a bar chart")
+            print ("line  : show the data plotted on a line chart")
+            print ("delay : show the delay over the raffles, plus the average delay")
+            print ("month : show the times the rule appear inside a month and the average")
+            print ("year  : show the times the rule appear inside an year and the average")
+            print ("done  : exit the program")
+            print ('')
+            cmd = raw_input('\033[92m' + 'Enter a command: ' + '\033[0m')
+            print ('')
+
+            if cmd == 'pie' :
+                #Pie chart
+                vals = []
+                keys = []
+                for i, k in enumerate(self.even_odd):
+                    vals.append(len(self.even_odd[k]))
+                    keys.append(k)
+
+                plt.figure(figsize=(6,6))
+                plt.pie(vals, labels=keys, autopct='%1.1f%%')
+                plt.show()
+
+            elif cmd == 'line' :
+                vals = []
+                keys = []
+                dic = {}
+                for k, v in self.even_odd.items():
+                    dic[k] = len(v)
+                sorted_list = sorted(dic.items(), key=operator.itemgetter(1), reverse=True)
+                for each in sorted_list:
+                    (k, v) = each
+                    vals.append(v)
+                    keys.append(k)
+
+                plt.plot(vals)
+                plt.xticks(np.arange(len(keys)), keys)
+                plt.show()
+
+            elif cmd == 'bar' :
+                for i, k in enumerate(self.even_odd):
+                    plt.bar(i, len(self.even_odd[k]))
+
+                plt.xticks(np.arange(len(self.even_odd)) + 0.4, self.even_odd.keys())
+                plt.show()
+
+            elif cmd == 'delay' :
+                delay = {}
+                for k, v in self.even_odd.items():
+                    delay[k] = []
+                    for ind in range(len(v) - 1):
+                        delay[k].append(v[ind + 1] - v[ind])
+                    plt.plot(delay[k], label=k)
+                    plt.title('Delay')
+                plt.xlabel('Times raffled')
+                plt.ylabel('Delay between raffles')
+                plt.legend()
+                plt.show()
+
+            elif cmd == 'month' :
+                pass
+            elif cmd == 'year' :
+                pass
+            elif cmd == 'done' :
+                done = True
+            else :
+                print ("I don't understand the command " + cmd)
+
     def print_rule_3_by_2(self):
         """
         """
@@ -252,6 +342,85 @@ class QuinaStats ():
                 self.even_odd["e4xo1"].append(int(each['Number'])) 
             elif even == 5 and odd == 0:
                 self.even_odd["e5xo0"].append(int(each['Number'])) 
+
+    def plot_doze (self):
+        """
+        """
+        done = False
+        
+        while not done :
+        
+            print ('')
+            print ('\033[92m' + "The following commands are available: " + '\033[0m')
+            print ('')
+            print ("pie   : show the data plotted on a pie chart")
+            print ("bar   : show the data plotted on a bar chart")
+            print ("line  : show the data plotted on a line chart")
+            print ("delay : show the delay over the raffles, plus the average delay")
+            print ("month : show the times the rule appear inside a month and the average")
+            print ("year  : show the times the rule appear inside an year and the average")
+            print ("done  : exit the program")
+            print ('')
+            cmd = raw_input('\033[92m' + 'Enter a command: ' + '\033[0m')
+            print ('')
+
+            if cmd == 'pie' :
+                #Pie chart
+                vals = []
+                keys = []
+                for i, k in enumerate(self.doze):
+                    vals.append(len(self.doze[k]))
+                    keys.append(k)
+
+                plt.figure(figsize=(6,6))
+                plt.pie(vals, labels=keys, autopct='%1.1f%%')
+                plt.show()
+
+            elif cmd == 'line' :
+                vals = []
+                keys = []
+                dic = {}
+                for k, v in self.doze.items():
+                    dic[k] = len(v)
+                sorted_list = sorted(dic.items(), key=operator.itemgetter(1), reverse=True)
+                for each in sorted_list:
+                    (k, v) = each
+                    vals.append(v)
+                    keys.append(k)
+
+                plt.plot(vals)
+                plt.xticks(np.arange(len(keys)), keys)
+                plt.show()
+
+            elif cmd == 'bar' :
+                for i, k in enumerate(self.doze):
+                    plt.bar(i, len(self.doze[k]))
+
+                plt.xticks(np.arange(len(self.doze)) + 0.4, self.doze.keys())
+                plt.show()
+
+            elif cmd == 'delay' :
+                delay = {}
+                for k, v in self.doze.items():
+                    delay[k] = []
+                    for ind in range(len(v) - 1):
+                        delay[k].append(v[ind + 1] - v[ind])
+                    plt.plot(delay[k], label=k)
+                    print delay[k]
+                    plt.title('Delay')
+                plt.xlabel('Times raffled')
+                plt.ylabel('Delay between raffles')
+                plt.legend()
+                plt.show()
+
+            elif cmd == 'month' :
+                pass
+            elif cmd == 'year' :
+                pass
+            elif cmd == 'done' :
+                done = True
+            else :
+                print ("I don't understand the command " + cmd)
 
     def print_more_often_dozen (self):
         """
@@ -296,6 +465,85 @@ class QuinaStats ():
                     self.doze['7x'].append(int(each['Number']))
                 elif d == 8:       
                     self.doze['8x'].append(int(each['Number']))
+
+    def plot_unit (self):
+        """
+        """
+        done = False
+        
+        while not done :
+        
+            print ('')
+            print ('\033[92m' + "The following commands are available: " + '\033[0m')
+            print ('')
+            print ("pie   : show the data plotted on a pie chart")
+            print ("bar   : show the data plotted on a bar chart")
+            print ("line  : show the data plotted on a line chart")
+            print ("delay : show the delay over the raffles, plus the average delay")
+            print ("month : show the times the rule appear inside a month and the average")
+            print ("year  : show the times the rule appear inside an year and the average")
+            print ("done  : exit the program")
+            print ('')
+            cmd = raw_input('\033[92m' + 'Enter a command: ' + '\033[0m')
+            print ('')
+
+            if cmd == 'pie' :
+                #Pie chart
+                vals = []
+                keys = []
+                for i, k in enumerate(self.unit):
+                    vals.append(len(self.unit[k]))
+                    keys.append(k)
+
+                plt.figure(figsize=(6,6))
+                plt.pie(vals, labels=keys, autopct='%1.1f%%')
+                plt.show()
+
+            elif cmd == 'line' :
+                vals = []
+                keys = []
+                dic = {}
+                for k, v in self.unit.items():
+                    dic[k] = len(v)
+                sorted_list = sorted(dic.items(), key=operator.itemgetter(1), reverse=True)
+                for each in sorted_list:
+                    (k, v) = each
+                    vals.append(v)
+                    keys.append(k)
+
+                plt.plot(vals)
+                plt.xticks(np.arange(len(keys)), keys)
+                plt.show()
+
+            elif cmd == 'bar' :
+                for i, k in enumerate(self.unit):
+                    plt.bar(i, len(self.unit[k]))
+
+                plt.xticks(np.arange(len(self.unit)) + 0.4, self.unit.keys())
+                plt.show()
+
+            elif cmd == 'delay' :
+                delay = {}
+                for k, v in self.unit.items():
+                    delay[k] = []
+                    for ind in range(len(v) - 1):
+                        delay[k].append(v[ind + 1] - v[ind])
+                    plt.plot(delay[k], label=k)
+                    print delay[k]
+                    plt.title('Delay')
+                plt.xlabel('Times raffled')
+                plt.ylabel('Delay between raffles')
+                plt.legend()
+                plt.show()
+
+            elif cmd == 'month' :
+                pass
+            elif cmd == 'year' :
+                pass
+            elif cmd == 'done' :
+                done = True
+            else :
+                print ("I don't understand the command " + cmd)
 
     def print_more_often_unit (self):
         """
@@ -403,13 +651,6 @@ class QuinaStats ():
         sorted_list = sorted(result.items(), key=operator.itemgetter(1), reverse=True)
         print(sorted_list)
 
-    def show_plot (self):
-        """
-        """
-        plt.figure()
-        plt.show()
-
-
     def screen_interf (self):
         """
         """
@@ -439,6 +680,7 @@ class QuinaStats ():
 
             if cmd == 'more' :
                 self.prepare_to_print('More')
+                self.plot_more_often()
 
             elif cmd == 'last' :
                 self.prepare_to_print('Last')
@@ -454,12 +696,15 @@ class QuinaStats ():
     
             elif cmd == 'rule' :
                 self.print_rule_3_by_2()
+                self.plot_rule()
 
             elif cmd == 'doze' :
                 self.print_more_often_dozen()
+                self.plot_doze()
 
             elif cmd == 'unit' :
                 self.print_more_often_unit()
+                self.plot_unit()
 
             elif cmd == 'look' :
                 self.look_up_num()
@@ -492,8 +737,6 @@ class QuinaStats ():
                 print('#### UNIT ####')
                 self.print_more_often_unit()
         
-            elif cmd == 'plot' :
-                self.show_plot()
             else :
                 print ("I don't understand the command " + cmd)
     
