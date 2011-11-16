@@ -2,13 +2,13 @@
 # -*- coding: iso-8859-15 -*-
 """
     TODO: 
-        - Fix the unicode problem on all_content
+        - Fix the Unicode problem on all_content
         - Find the average a number arise; ("More")
         - Find the deviation by de media; ("More")
         - Positioning the number in the quartiles; ("More")
         - Find the deviation by de media; ("Delay")
         - Positioning the number in the quartiles; ("Delay")
-        - Calculate the probabilitty of a number been raffled, based upon it's score;("Sugm/Sugl")
+        - Calculate the probability of a number been raffled, based upon it's score;("Sugm/Sugl")
         - create unit test;
         - create package;
         - adapt to Mega-Sena
@@ -16,6 +16,7 @@
         - adapt to Lotomania
         - adapt to Lotofacil
         - standardize names like Python Style Standard (PEP8?)
+        - split the code to different files
         - uses NCurses;
         - uses i18n;
         - upload to pyPI;
@@ -155,18 +156,19 @@ class QuinaStats ():
         """
         """
         for num in range(1,81):
-            self.all_stat.append({"More": 0, "Last": 0, "Average": 0, "Worst": 0, "Occur": [], 'Delay': []})
+            self.all_stat.append({"More": 0, "Last": 0, "Average": 0, "Worst": 0, "Occur": []})
 
     def prepare_to_print(self, key):
         """
         """
         di ={} 
-        for num in range(1,81):
+        for ind, val in enumerate(self.all_stat):
+            num = ind + 1
             if num < 10:
                 el = '0' + str(num)
             else:
                 el = str(num)
-            di[str(el)] = self.all_stat[num - 1][key]
+            di[str(el)] = val[key]
 
         sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
         print(sorted_list)
@@ -207,24 +209,25 @@ class QuinaStats ():
             for el in each["Dozens"]:
                 self.all_stat[int(el) - 1]['Occur'].append(int(each['Number']))
 
-        for num in range(1,81):
-            self.all_stat[num - 1]['More'] = len(self.all_stat[num - 1]['Occur'])
+        for ind, val in enumerate(self.all_stat):
+            val['More'] = len(val['Occur'])
 
     def last_time(self):
         """
         """
-        for num in range(1,81):
-            self.all_stat[num - 1]['Last'] = int(self.all_content[-1]['Number']) - self.all_stat[num - 1]['Occur'][-1]
+        for ind, val in enumerate(self.all_stat):
+            val['Last'] = int(self.all_content[-1]['Number']) - val['Occur'][-1]
 
     def most_delay(self):
         """
         """
         for el in self.all_stat:
+            dic = {'Delay':[]}
             for val in range(1, len(el['Occur'])):
-                el['Delay'].append( el['Occur'][val] - el['Occur'][val - 1] - 1)
+                dic['Delay'].append( el['Occur'][val] - el['Occur'][val - 1] - 1)
 
-            el['Worst'] = max(el['Delay'])
-            el['Average'] = sum(el['Delay'])/len(el['Delay'])
+            el['Worst'] = max(dic['Delay'])
+            el['Average'] = sum(dic['Delay'])/len(dic['Delay'])
         
     def plot_rule (self):
         """
@@ -624,16 +627,17 @@ class QuinaStats ():
 
         result = {}
         st = 'x'
-        for num in range(1,81):
+        for ind, val in enumerate(self.all_stat):
+            num = ind + 1
             if num < 10:
                 el = '0' + str(num)
             else:
                 el = str(num)
 
             if more_recently:
-                result[el] = self.all_stat[num - 1]['More']*2 - self.all_stat[num - 1]['Last'] # Weight 2
+                result[el] = val['More']*2 - val['Last'] # Weight 2
             else:
-                result[el] = self.all_stat[num - 1]['More']*2 + self.all_stat[num - 1]['Last'] # Weight 2
+                result[el] = val['More']*2 + val['Last'] # Weight 2
 
             doz = dozen(num)
             result[el] += len(self.doze[str(doz)+st])/2 #Weight 1/2
