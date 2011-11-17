@@ -26,103 +26,24 @@
         - make the Web App in an Android App;
         - make money with it;
 """
-import HTMLParser 
 import pdb
 import operator
 import os
 import pickle
 import matplotlib.pyplot as plt
-import math
-import codecs
+import utils
 import numpy as np
+from parsepage import ParsePage
 
-def ret_unit(num):
-    """
-    """
-    return int(round(math.fmod((float(num)/10.0),1)*10))
-
-def dozen(num):
-    """
-    """
-    return int((num/10)//1)
-
-def isodd(num):
-    """
-    """
-    return num & 1 and True or False
-
-def get_content ():
-    """
-    """
-    try:
-        with codecs.open('D_QUINA.HTM', 'r', 'latin-1') as data:
-            return (data.read())
-    
-    except IOError as err:
-        print ("File error: " + str(err))
-
-def test ():
-    """
-    """
-    quina = QuinaStats()
-    quina.screen_interf()
-
-class ParsePage(HTMLParser.HTMLParser): 
-    """
-    """
-    def __init__(self):
-        """
-        """
-        HTMLParser.HTMLParser.__init__(self)
-        self.inside_td = False
-        self.counter = 0
-        self.raffle = {"Number": 0, "Date": "00/00/00",  "Dozens": [], "Accumulated": 'Não'}
-        self.all_content = []
-        self.key = {"Number": 0, "Date": 1, "Dozens": 2, "Accumulated": 14}
-
-    def handle_starttag(self, tag, attrs):  
-        """
-        """
-        if tag == 'td':
-            self.inside_td = True
-
-    def handle_endtag(self, tag): 
-        """
-        """
-        if tag == 'td':
-            self.counter += 1
-            self.inside_td = False
-        elif tag == 'tr' and self.counter != 0:
-            self.counter = 0
-            self.raffle["Dozens"].sort()
-            self.all_content.append(dict(self.raffle))
-            self.raffle["Dozens"] = []
-
-    def handle_data(self, data): 
-        """
-        """
-        if self.inside_td and data:
-            if self.counter in range(2, 7):
-                self.raffle["Dozens"].append(data)
-            elif self.counter == self.key["Number"]:
-                self.raffle["Number"] = data
-            elif self.counter == self.key["Accumulated"]:
-                self.raffle["Accumulated"] = data
-            elif self.counter == self.key["Date"]:
-                self.raffle["Date"] = data
-
-    def get_full_data (self):
-        return (self.all_content)
-    
 class QuinaStats ():
     """
     """
-    def __init__(self):
+    def __init__(self, data_file):
         """
         """
 
         if os.path.exists('quina.pickle'):
-            if os.path.getmtime('quina.pickle') > os.path.getmtime('D_QUINA.HTM'):
+            if os.path.getmtime('quina.pickle') > os.path.getmtime(data_file):
                 try:
                     with open('quina.pickle', 'rb') as data_bin:
                         self.all_content = pickle.load(data_bin)
@@ -131,7 +52,7 @@ class QuinaStats ():
                     print ("File error: " + str(err))
         else:
             p = ParsePage() 
-            p.feed(get_content())
+            p.feed(utils.get_content(data_file))
             self.all_content = p.get_full_data()
             try:
                 with open('quina.pickle', 'wb') as data_bin:
@@ -328,7 +249,7 @@ class QuinaStats ():
             even = 0
             odd = 0
             for el in each["Dozens"]:
-                if isodd(int(el)):
+                if utils.isodd(int(el)):
                     odd += 1
                 else:
                     even += 1
@@ -448,7 +369,7 @@ class QuinaStats ():
         for each in self.all_content:
             d = 0
             for el in each['Dozens']:
-                d = dozen(int(el))
+                d = utils.dozen(int(el))
 
                 if d == 0:
                     self.doze['0x'].append(int(each['Number']))
@@ -572,7 +493,7 @@ class QuinaStats ():
         for each in self.all_content:
             d = 0
             for el in each['Dozens']:
-                u = ret_unit(int(el))
+                u = utils.ret_unit(int(el))
 
                 if u == 0:
                     self.unit['x0'].append(int(each['Number']))
@@ -639,10 +560,10 @@ class QuinaStats ():
             else:
                 result[el] = val['More']*2 + val['Last'] # Weight 2
 
-            doz = dozen(num)
+            doz = utils.dozen(num)
             result[el] += len(self.doze[str(doz)+st])/2 #Weight 1/2
 
-            uni = ret_unit(num)
+            uni = utils.ret_unit(num)
             result[el] += len(self.unit[st+str(uni)])/2 #Weight 1/2
 
         print('##################### MORE OFTEN #####################')
@@ -745,6 +666,5 @@ class QuinaStats ():
                 print ("I don't understand the command " + cmd)
     
 
-if __name__ == '__main__': test()
-
-
+if __name__ == '__main__':
+    print('O arquivo agora é lotto.py')
