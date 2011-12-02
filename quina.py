@@ -1,38 +1,11 @@
 #! /usr/bin/python
 # -*- coding: iso-8859-15 -*-
-"""
-    TODO: 
-        - Fix the Unicode problem on all_content
-        - Find the average a number arise; ("More")
-        - Find the deviation by de media; ("More")
-        - Positioning the number in the quartiles; ("More")
-        - Find the deviation by de media; ("Delay")
-        - Positioning the number in the quartiles; ("Delay")
-        - Calculate the probability of a number been raffled, based upon it's score;("Sugm/Sugl")
-        - create unit test;
-        - create package;
-        - adapt to Mega-Sena
-        - adapt to Dupla-Sena
-        - adapt to Lotomania
-        - adapt to Lotofacil
-        - standardize names like Python Style Standard (PEP8?)
-        - split the code to different files
-        - uses NCurses;
-        - uses i18n;
-        - upload to pyPI;
-        - create an GUI interface;
-        - adapt to an US or UK lottery;
-        - make this app in a Web App;
-        - make the Web App in an Android App;
-        - make money with it;
-"""
+
 from lottery import Lottery
 import pdb
 import os
 import pickle
-import matplotlib.pyplot as plt
 import utils
-import numpy as np
 from parsepage import ParsePage
 import operator
 
@@ -42,6 +15,9 @@ class QuinaStats (Lottery):
     def __init__(self, data_file):
         """
         """
+        self.num_dozens = 80
+        self.doz_by_raffle = 5
+
         Lottery.__init__(self)
         if os.path.exists('quina.pickle'):
             if os.path.getmtime('quina.pickle') > os.path.getmtime(data_file):
@@ -52,7 +28,7 @@ class QuinaStats (Lottery):
                 except IOError as err:
                     print ("File error: " + str(err))
         else:
-            p = ParsePage() 
+            p = ParsePage(self.doz_by_raffle) 
             p.feed(utils.get_content(data_file))
             self.all_content = p.get_full_data()
             try:
@@ -71,12 +47,6 @@ class QuinaStats (Lottery):
         self.rule_even_by_odd()
         self.more_often_dozen()
         self.more_often_unit()
-
-    def init_stat_table(self):
-        """
-        """
-        for num in range(1,81):
-            self.all_stat.append({"More": 0, "Last": 0, "Average": 0, "Worst": 0, "Occur": []})
 
     def print_rule_even_by_odd(self):
         """
@@ -161,32 +131,6 @@ class QuinaStats (Lottery):
                     self.doze['7x'].append(int(each['Number']))
                 elif d == 8:       
                     self.doze['8x'].append(int(each['Number']))
-
-    def look_up_num(self):
-        """
-        """
-        print ('Enter with 5 numbers:')
-        dozens = []
-        for el in range(5):
-            num = input('Dozen number ' + str(el + 1) + ':')
-            if int(num) < 10 and len(num) < 2:
-                num = '0' + str(num)
-            else:
-                num = str(num)
-            dozens.append(num)
-        dozens.sort()
-
-        founded = False
-        for each in self.all_content:
-            if dozens == each["Dozens"]:
-                founded = True
-                print ('Dozens founded :')
-                print ('Date : ' + each['Date'])
-                print ('Accumulated : ' + each['Accumulated'])
-
-        if not founded:
-            # TODO: Test the numbers with/against the statistics
-            print ('Dozens not founded')
 
 
 if __name__ == '__main__':
