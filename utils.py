@@ -25,7 +25,7 @@ def get_content (data_file):
     """
     """
     try:
-        with codecs.open(data_file, 'r', 'latin-1') as data:
+        with open(data_file, 'r') as data:
             return (data.read())
     
     except IOError as err:
