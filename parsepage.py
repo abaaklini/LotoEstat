@@ -8,15 +8,16 @@ import HTMLParser
 class ParsePage(HTMLParser.HTMLParser): 
     """
     """
-    def __init__(self):
+    def __init__(self, dozens):
         """
         """
+        self.dozens = dozens
         HTMLParser.HTMLParser.__init__(self)
         self.inside_td = False
         self.counter = 0
         self.raffle = {"Number": 0, "Date": "00/00/00",  "Dozens": [], "Accumulated": 'Não'}
         self.all_content = []
-        self.key = {"Number": 0, "Date": 1, "Dozens": 2, "Accumulated": 14}
+        self.key = {"Number": 0, "Date": 1, "Dozens": 2, "Accumulated": 2 + self.dozens + 7}
 
     def handle_starttag(self, tag, attrs):  
         """
@@ -40,7 +41,7 @@ class ParsePage(HTMLParser.HTMLParser):
         """
         """
         if self.inside_td and data:
-            if self.counter in range(2, 7):
+            if self.counter in range(2, 2 + self.dozens):
                 self.raffle["Dozens"].append(data)
             elif self.counter == self.key["Number"]:
                 self.raffle["Number"] = data
