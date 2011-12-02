@@ -6,6 +6,7 @@
 import operator
 import matplotlib.pyplot as plt
 import utils
+import pdb
 
 class Lottery ():
     """
@@ -17,6 +18,12 @@ class Lottery ():
         self.even_odd = {}
         self.doze = {}
         self.unit = {"x0": [], "x1": [], "x2": [], "x3": [], "x4": [], "x5": [], "x6": [], "x7": [], "x8": [], "x9": []}
+
+    def init_stat_table(self):
+        """
+        """
+        for num in range(1, self.num_dozens + 1):
+            self.all_stat.append({"More": 0, "Last": 0, "Average": 0, "Worst": 0, "Occur": []})
 
     def prepare_to_print(self, key):
         """
@@ -37,8 +44,9 @@ class Lottery ():
         """
         """
         for el in self.all_content:
-            for k, v in el.items():
-                print(k + ':' + repr(v))
+            print(el)
+        #    for k, v in el.items():
+        #        print(k + ':' + repr(v))
 
     def plot_more_often(self):
         """
@@ -405,6 +413,33 @@ class Lottery ():
         print('################# SUGGESTED NUMBERS #####################')
         sorted_list = sorted(result.items(), key=operator.itemgetter(1), reverse=True)
         print(sorted_list)
+
+    def look_up_num(self):
+        """
+        """
+        print ('Enter with ' + str(self.doz_by_raffle) + ' numbers:')
+        dozens = []
+        for el in range(self.doz_by_raffle):
+            num = raw_input('Dozen number ' + str(el + 1) + ':')
+            if int(num) < 10 and len(num) < 2:
+                num = '0' + str(num)
+            else:
+                num = str(num)
+            dozens.append(num)
+        dozens.sort()
+
+        founded = False
+        for each in self.all_content:
+            if dozens == each["Dozens"]:
+                founded = True
+                print ('')
+                print ('\033[92m' + 'Dozens founded :' + '\033[0m')
+                print ('Date : ' + each['Date'])
+                print ('Accumulated : ' + each['Accumulated'])
+
+        if not founded:
+            # TODO: Test the numbers with/against the statistics
+            print ('Dozens not founded')
 
     def screen_interf (self):
         """
