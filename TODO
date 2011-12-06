@@ -1,4 +1,6 @@
 TODO: 
+    - DONE split the code to different files
+    - DONE adapt to Mega-Sena
     - Fix the Unicode problem on all_content
     - Find the average a number arise; ("More")
     - Find the deviation by de media; ("More")
@@ -8,17 +10,15 @@ TODO:
     - Calculate the probability of a number been raffled, based upon it's score;("Sugm/Sugl")
     - create unit test;
     - create package;
-    - DONE adapt to Mega-Sena
-    - adapt to Dupla-Sena
-    - adapt to Lotomania
-    - adapt to Lotofacil
     - standardize names like Python Style Standard (PEP8?)
-    - DONE split the code to different files
     - uses NCurses;
     - uses i18n;
     - upload to pyPI;
     - create an GUI interface;
-    - adapt to an US or UK lottery;
     - make this app in a Web App;
     - make the Web App in an Android App;
     - make money with it;
+    - adapt to Dupla-Sena (More difficult due to data stored in different formats)
+    - adapt to Lotomania (More difficult due to data stored in different formats)
+    - adapt to Lotofacil (More difficult due to data stored in different formats)
+    - adapt to an US or UK lottery (More difficult due to data stored in different formats);

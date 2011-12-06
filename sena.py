@@ -1,6 +1,7 @@
 #! /usr/bin/python
 # -*- coding: iso-8859-15 -*-
 
+from __future__ import print_function
 from lottery import Lottery
 import pdb
 import os
@@ -8,6 +9,8 @@ import pickle
 import utils
 from parsepage import ParsePage
 import operator
+import numpy as np
+import matplotlib.pyplot as plt
 
 class SenaStats (Lottery):
     """
@@ -128,6 +131,282 @@ class SenaStats (Lottery):
                     self.doze['5x'].append(int(each['Number']))
                 elif d == 6:       
                     self.doze['6x'].append(int(each['Number']))
+
+    def plot_doze (self):
+        """
+        """
+        done = False
+        
+        while not done :
+        
+            print ('')
+            print ('\033[92m' + "The following commands are available: " + '\033[0m')
+            print ('')
+            print ("pie   : show the data plotted on a pie chart")
+            print ("bar   : show the data plotted on a bar chart")
+            print ("line  : show the data plotted on a line chart")
+            print ("delay : show the delay over the raffles, plus the average delay")
+            print ("freq  : show the frequency of delays")
+            print ("done  : exit the program")
+            print ('')
+            cmd = raw_input('\033[92m' + 'Enter a command: ' + '\033[0m')
+            print ('')
+
+            if cmd == 'pie' :
+                #Pie chart
+                vals = []
+                keys = []
+                for i, k in enumerate(self.doze):
+                    vals.append(len(self.doze[k]))
+                    keys.append(k)
+
+                plt.figure(figsize=(6,6))
+                plt.pie(vals, labels=keys, autopct='%1.1f%%')
+                plt.show()
+
+            elif cmd == 'line' :
+                vals = []
+                keys = []
+                dic = {}
+                for k, v in self.doze.items():
+                    dic[k] = len(v)
+                sorted_list = sorted(dic.items(), key=operator.itemgetter(1), reverse=True)
+                for each in sorted_list:
+                    (k, v) = each
+                    vals.append(v)
+                    keys.append(k)
+
+                plt.plot(vals)
+                plt.xticks(np.arange(len(keys)), keys)
+                plt.show()
+
+            elif cmd == 'bar' :
+                for i, k in enumerate(self.doze):
+                    plt.bar(i, len(self.doze[k]))
+
+                plt.xticks(np.arange(len(self.doze)) + 0.4, self.doze.keys())
+                plt.show()
+
+            elif cmd == 'delay' :
+                done = False
+                
+                while not done :
+                
+                    print ('')
+                    print ('\033[92m' + "Choose the doze number:" + '\033[0m')
+                    print ('')
+                    print ("0", end='\t')
+                    print ("1")
+                    print ("2", end='\t')
+                    print ("3")
+                    print ("4", end='\t')
+                    print ("5")
+                    print ("6")
+                    print ("done  : exit the program")
+                    print ('')
+                    cmd = raw_input('\033[92m' + 'Enter a unit (or done): ' + '\033[0m')
+                    print ('')
+
+                    if cmd == 'done' :
+                        break
+
+                    delay = []
+                    v = self.doze[cmd + 'x']
+                    for ind in range(len(v) - 1):
+                        delay.append(v[ind + 1] - v[ind])
+                    plt.plot(delay, label=cmd + 'x')
+                    print (delay)
+                    plt.title('Delay')
+                    plt.xlabel('Times raffled')
+                    plt.ylabel('Delay between raffles')
+                    plt.legend()
+                    plt.show()
+
+            elif cmd == 'freq' :
+                done = False
+                
+                while not done :
+                
+                    print ('')
+                    print ('\033[92m' + "Choose the doze number:" + '\033[0m')
+                    print ('')
+                    print ("0", end='\t')
+                    print ("1")
+                    print ("2", end='\t')
+                    print ("3")
+                    print ("4", end='\t')
+                    print ("5")
+                    print ("6")
+                    print ("done  : exit the program")
+                    print ('')
+                    cmd = raw_input('\033[92m' + 'Enter a unit (or done): ' + '\033[0m')
+                    print ('')
+
+                    if cmd == 'done' :
+                        break
+
+                    delay = []
+                    v = self.doze[cmd + 'x']
+                    for ind in range(len(v) - 1):
+                        delay.append(v[ind + 1] - v[ind])
+                    delay.sort()
+                    plt.plot(delay, label=cmd + 'x')
+                    print (delay)
+                    plt.title('Delay')
+                    plt.xlabel('Times raffled')
+                    plt.ylabel('Delay between raffles')
+                    plt.legend()
+                    plt.show()
+
+            elif cmd == 'done' :
+                done = True
+            else :
+                print ("I don't understand the command " + cmd)
+
+    def plot_rule (self):
+        """
+        """
+        done = False
+        
+        while not done :
+        
+            print ('')
+            print ('\033[92m' + "The following commands are available: " + '\033[0m')
+            print ('')
+            print ("pie   : show the data plotted on a pie chart")
+            print ("bar   : show the data plotted on a bar chart")
+            print ("line  : show the data plotted on a line chart")
+            print ("delay : show the delay over the raffles, plus the average delay")
+            print ("freq  : show the frequency of delays")
+            print ("done  : exit the program")
+            print ('')
+            cmd = raw_input('\033[92m' + 'Enter a command: ' + '\033[0m')
+            print ('')
+
+            if cmd == 'pie' :
+                #Pie chart
+                vals = []
+                keys = []
+                for i, k in enumerate(self.even_odd):
+                    vals.append(len(self.even_odd[k]))
+                    keys.append(k)
+
+                plt.figure(figsize=(6,6))
+                plt.pie(vals, labels=keys, autopct='%1.1f%%')
+                plt.show()
+
+            elif cmd == 'line' :
+                vals = []
+                keys = []
+                dic = {}
+                for k, v in self.even_odd.items():
+                    dic[k] = len(v)
+                sorted_list = sorted(dic.items(), key=operator.itemgetter(1), reverse=True)
+                for each in sorted_list:
+                    (k, v) = each
+                    vals.append(v)
+                    keys.append(k)
+
+                plt.plot(vals)
+                plt.xticks(np.arange(len(keys)), keys)
+                plt.show()
+
+            elif cmd == 'bar' :
+                for i, k in enumerate(self.even_odd):
+                    plt.bar(i, len(self.even_odd[k]))
+
+                plt.xticks(np.arange(len(self.even_odd)) + 0.4, self.even_odd.keys())
+                plt.show()
+
+            elif cmd == 'delay' :
+                done = False
+                dic = {"1" : "e0xo6",
+                       "2" : "e1xo5", 
+                       "3" : "e2xo4",
+                       "4" : "e3xo3",
+                       "5" : "e4xo2",
+                       "6" : "e5xo1",
+                       "7" : "e6xo0"}
+                
+                while not done :
+                
+                    print ('')
+                    print ('\033[92m' + "Choose the rule option:" + '\033[0m')
+                    print ('')
+                    print ("1 - e0xo6")
+                    print ("2 - e1xo5")
+                    print ("3 - e2xo4")
+                    print ("4 - e3xo3")
+                    print ("5 - e4xo2")
+                    print ("6 - e5xo1")
+                    print ("7 - e6xo0")
+                    print ("done  : exit the program")
+                    print ('')
+                    cmd = raw_input('\033[92m' + 'Enter your option (or done): ' + '\033[0m')
+                    print ('')
+
+                    if cmd == 'done' :
+                        break
+
+                    delay = []
+                    v = self.even_odd[dic[cmd]]
+                    for ind in range(len(v) - 1):
+                        delay.append(v[ind + 1] - v[ind])
+                    plt.plot(delay, label=dic[cmd])
+                    print (delay)
+                    plt.title('Delay')
+                    plt.xlabel('Times raffled')
+                    plt.ylabel('Delay between raffles')
+                    plt.legend()
+                    plt.show()
+
+            elif cmd == 'freq' :
+                done = False
+                dic = {"1" : "e0xo6",
+                       "2" : "e1xo5", 
+                       "3" : "e2xo4",
+                       "4" : "e3xo3",
+                       "5" : "e4xo2",
+                       "6" : "e5xo1",
+                       "7" : "e6xo0"}
+                
+                while not done :
+                
+                    print ('')
+                    print ('\033[92m' + "Choose the rule option:" + '\033[0m')
+                    print ('')
+                    print ("1 - e0xo6")
+                    print ("2 - e1xo5")
+                    print ("3 - e2xo4")
+                    print ("4 - e3xo3")
+                    print ("5 - e4xo2")
+                    print ("6 - e5xo1")
+                    print ("7 - e6xo0")
+                    print ("done  : exit the program")
+                    print ('')
+                    cmd = raw_input('\033[92m' + 'Enter your option (or done): ' + '\033[0m')
+                    print ('')
+
+                    if cmd == 'done' :
+                        break
+
+                    delay = []
+                    v = self.even_odd[dic[cmd]]
+                    for ind in range(len(v) - 1):
+                        delay.append(v[ind + 1] - v[ind])
+                    delay.sort()
+                    plt.plot(delay, label=dic[cmd])
+                    print (delay)
+                    plt.title('Delay')
+                    plt.xlabel('Times raffled')
+                    plt.ylabel('Delay between raffles')
+                    plt.legend()
+                    plt.show()
+
+            elif cmd == 'done' :
+                done = True
+            else :
+                print ("I don't understand the command " + cmd)
 
 if __name__ == '__main__':
     print('O arquivo agora é lotto.py')
