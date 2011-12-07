@@ -141,19 +141,7 @@ class QuinaStats (Lottery):
         done = False
         
         while not done :
-        
-            print ('')
-            print ('\033[92m' + "The following commands are available: " + '\033[0m')
-            print ('')
-            print ("pie   : show the data plotted on a pie chart")
-            print ("bar   : show the data plotted on a bar chart")
-            print ("line  : show the data plotted on a line chart")
-            print ("delay : show the delay over the raffles, plus the average delay")
-            print ("freq  : show the frequency of delays")
-            print ("done  : exit the program")
-            print ('')
-            cmd = raw_input('\033[92m' + 'Enter a command: ' + '\033[0m')
-            print ('')
+            cmd = utils.print_second_menu()
 
             if cmd == 'pie' :
                 #Pie chart
@@ -194,32 +182,16 @@ class QuinaStats (Lottery):
                 done = False
                 
                 while not done :
-                
-                    print ('')
-                    print ('\033[92m' + "Choose the doze number:" + '\033[0m')
-                    print ('')
-                    print ("0", end='\t')
-                    print ("1")
-                    print ("2", end='\t')
-                    print ("3")
-                    print ("4", end='\t')
-                    print ("5")
-                    print ("6", end='\t')
-                    print ("7")
-                    print ("8")
-                    print ("done  : exit the program")
-                    print ('')
-                    cmd = raw_input('\033[92m' + 'Enter a unit (or done): ' + '\033[0m')
-                    print ('')
+                    opt = utils.print_option_menu(8)
 
-                    if cmd == 'done' :
+                    if opt == 'done' :
                         break
 
                     delay = []
-                    v = self.doze[cmd + 'x']
+                    v = self.doze[opt + 'x']
                     for ind in range(len(v) - 1):
                         delay.append(v[ind + 1] - v[ind])
-                    plt.plot(delay, label=cmd + 'x')
+                    plt.plot(delay, label=opt + 'x')
                     print (delay)
                     plt.title('Delay')
                     plt.xlabel('Times raffled')
@@ -231,33 +203,17 @@ class QuinaStats (Lottery):
                 done = False
                 
                 while not done :
+                    opt = utils.print_option_menu(8)
                 
-                    print ('')
-                    print ('\033[92m' + "Choose the doze number:" + '\033[0m')
-                    print ('')
-                    print ("0", end='\t')
-                    print ("1")
-                    print ("2", end='\t')
-                    print ("3")
-                    print ("4", end='\t')
-                    print ("5")
-                    print ("6", end='\t')
-                    print ("7")
-                    print ("8")
-                    print ("done  : exit the program")
-                    print ('')
-                    cmd = raw_input('\033[92m' + 'Enter a unit (or done): ' + '\033[0m')
-                    print ('')
-
-                    if cmd == 'done' :
+                    if opt == 'done' :
                         break
 
                     delay = []
-                    v = self.doze[cmd + 'x']
+                    v = self.doze[opt + 'x']
                     for ind in range(len(v) - 1):
                         delay.append(v[ind + 1] - v[ind])
                     delay.sort()
-                    plt.plot(delay, label=cmd + 'x')
+                    plt.plot(delay, label=opt + 'x')
                     print (delay)
                     plt.title('Delay')
                     plt.xlabel('Times raffled')
@@ -276,19 +232,7 @@ class QuinaStats (Lottery):
         done = False
         
         while not done :
-        
-            print ('')
-            print ('\033[92m' + "The following commands are available: " + '\033[0m')
-            print ('')
-            print ("pie   : show the data plotted on a pie chart")
-            print ("bar   : show the data plotted on a bar chart")
-            print ("line  : show the data plotted on a line chart")
-            print ("delay : show the delay over the raffles, plus the average delay")
-            print ("freq  : show the frequency of delays")
-            print ("done  : exit the program")
-            print ('')
-            cmd = raw_input('\033[92m' + 'Enter a command: ' + '\033[0m')
-            print ('')
+            cmd = utils.print_second_menu()
 
             if cmd == 'pie' :
                 #Pie chart

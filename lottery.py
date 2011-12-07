@@ -159,33 +159,16 @@ class Lottery ():
                 done = False
                 
                 while not done :
-                
-                    print ('')
-                    print ('\033[92m' + "Choose the unit number:" + '\033[0m')
-                    print ('')
-                    print ("0", end='\t')
-                    print ("1")
-                    print ("2", end='\t')
-                    print ("3")
-                    print ("4", end='\t')
-                    print ("5")
-                    print ("6", end='\t')
-                    print ("7")
-                    print ("8", end='\t')
-                    print ("9")
-                    print ("done  : exit the program")
-                    print ('')
-                    cmd = raw_input('\033[92m' + 'Enter a unit (or done): ' + '\033[0m')
-                    print ('')
+                    opt = utils.print_option_menu(9)
 
-                    if cmd == 'done' :
+                    if opt == 'done' :
                         break
 
                     delay = []
-                    v = self.unit['x' + cmd]
+                    v = self.unit['x' + opt]
                     for ind in range(len(v) - 1):
                         delay.append(v[ind + 1] - v[ind])
-                    plt.plot(delay, label='x' + cmd)
+                    plt.plot(delay, label='x' + opt)
                     print (delay)
                     plt.title('Delay')
                     plt.xlabel('Times raffled')
@@ -197,34 +180,17 @@ class Lottery ():
                 done = False
                 
                 while not done :
+                    opt = utils.print_option_menu(9)
                 
-                    print ('')
-                    print ('\033[92m' + "Choose the unit number:" + '\033[0m')
-                    print ('')
-                    print ("0", end='\t')
-                    print ("1")
-                    print ("2", end='\t')
-                    print ("3")
-                    print ("4", end='\t')
-                    print ("5")
-                    print ("6", end='\t')
-                    print ("7")
-                    print ("8", end='\t')
-                    print ("9")
-                    print ("done  : exit the program")
-                    print ('')
-                    cmd = raw_input('\033[92m' + 'Enter a unit (or done): ' + '\033[0m')
-                    print ('')
-
-                    if cmd == 'done' :
+                    if opt == 'done' :
                         break
 
                     delay = []
-                    v = self.unit['x' + cmd]
+                    v = self.unit['x' + opt]
                     for ind in range(len(v) - 1):
                         delay.append(v[ind + 1] - v[ind])
                     delay.sort()
-                    plt.plot(delay, label='x' + cmd)
+                    plt.plot(delay, label='x' + opt)
                     print (delay)
                     plt.title('Delay')
                     plt.xlabel('Times raffled')
@@ -317,7 +283,7 @@ class Lottery ():
         print('################# SUGGESTED NUMBERS #####################')
         sorted_list = sorted(result.items(), key=operator.itemgetter(1), reverse=True)
         print(sorted_list)
-
+       
     def look_up_num(self):
         """
         """
@@ -331,7 +297,7 @@ class Lottery ():
                 num = str(num)
             dozens.append(num)
         dozens.sort()
-
+           
         founded = False
         for each in self.all_content:
             if dozens == each["Dozens"]:
@@ -340,37 +306,18 @@ class Lottery ():
                 print ('\033[92m' + 'Dozens founded :' + '\033[0m')
                 print ('Date : ' + each['Date'])
                 print ('Accumulated : ' + each['Accumulated'])
-
+           
         if not founded:
             # TODO: Test the numbers with/against the statistics
             print ('Dozens not founded')
-
+                
     def screen_interf (self):
         """
         """
         done = False
-        
+
         while not done :
-        
-            print ('')
-            print ('\033[92m' + "The following commands are available: " + '\033[0m')
-            print ('')
-            print ("aver : show the average delay between raffles")
-            print ("done : exit the program")
-            print ("doze : show the most common dozens over all raffles")
-            print ("last : show the last time a numbers arises.")
-            print ("look : look up for a given group of 5 dozens.")
-            print ("more : show the numbers more often arises.")
-            print ("occu : print the list of occurrence of a number during the raffles.")
-            print ("rule : show the most common combination of even and odds")
-            print ("show : show all data in memory.")
-            print ("sugl : Suggest the numbers with best statistics and arises less recently")
-            print ("sugm : Suggest the numbers with best statistics and arises more recently")
-            print ("unit : show the most common units over all raffles")
-            print ("wors : show the worst delay between raffles")
-            print ('')
-            cmd = raw_input('\033[92m' + 'Enter a command: ' + '\033[0m')
-            print ('')
+            cmd = utils.print_main_menu ()
 
             if cmd == 'more' :
                 self.prepare_to_print('More')
