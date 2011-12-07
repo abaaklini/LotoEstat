@@ -53,5 +53,8 @@ class ParsePage(HTMLParser.HTMLParser):
     def get_full_data (self):
         return (self.all_content)
     
-if __name__ == '__main__':
-    print ('parserpage.py')
+    def _test():
+        import doctest
+        doctest.testfile('test/parsepage_test.txt')
+
+if __name__ == '__main__': _test()

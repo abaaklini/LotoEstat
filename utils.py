@@ -7,17 +7,31 @@ import math
 import codecs
 
 def ret_unit(num):
-    """
+    r"""
+        >>> ret_unit(int('01'))
+        1
+        >>> ret_unit(11)
+        1
     """
     return int(round(math.fmod((float(num)/10.0),1)*10))
 
 def dozen(num):
-    """
+    r"""
+        >>> dozen(int('01'))
+        0
+        >>> dozen(11)
+        1
     """
     return int((num/10)//1)
 
 def isodd(num):
-    """
+    r"""
+        >>> isodd(1)
+        True
+        >>> isodd(0)
+        False
+        >>> isodd(2)
+        False
     """
     return num & 1 and True or False
 
@@ -86,6 +100,9 @@ def print_second_menu():
     print ('')
     return cmd
 
-if __name__ == '__main__':
-    print('utils.py')
+def _test():
+    import doctest
+    doctest.testmod()
+    doctest.testfile("test/utils_test.txt")
 
+if __name__ == '__main__': _test()
