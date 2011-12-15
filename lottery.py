@@ -10,7 +10,7 @@ import utils
 import pdb
 import numpy as np
 
-class Lottery ():
+class Lottery (object):
     """
     """
     def __init__(self):

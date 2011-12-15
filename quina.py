@@ -355,6 +355,7 @@ class QuinaStats (Lottery):
             else :
                 print ("I don't understand the command " + cmd)
 
+def _test():
+    pass
 
-if __name__ == '__main__':
-    print('O arquivo agora é lotto.py')
+if __name__ == '__main__': _test()
