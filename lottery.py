@@ -16,8 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
-"""
-"""
 from __future__ import print_function
 import operator
 import matplotlib.pyplot as plt
@@ -40,7 +38,26 @@ class Lottery (object):
         """
         """
         for num in range(1, self.num_dozens + 1):
-            self.all_stat.append({"More": 0, "Last": 0, "Average": 0, "Worst": 0, "Occur": []})
+            self.all_stat.append({'More': 0, 'Last': 0, 'Average': 0, 'Worst': 0, 'Occur': [], 'Delay': [], 'Median': 0})
+
+    ##### Methods for Printing #####
+    def print_more_often_unit (self):
+        """
+        """
+        di = {'x0': len(self.unit['x0']),
+              'x1': len(self.unit['x1']),
+              'x2': len(self.unit['x2']),
+              'x3': len(self.unit['x3']),
+              'x4': len(self.unit['x4']),
+              'x5': len(self.unit['x5']),
+              'x6': len(self.unit['x6']),
+              'x7': len(self.unit['x7']),
+              'x8': len(self.unit['x8']),
+              'x9': len(self.unit['x9'])}
+
+        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
+        for each in sorted_list:
+            print(each)
 
     def prepare_to_print(self, key):
         """
@@ -65,56 +82,7 @@ class Lottery (object):
         #    for k, v in el.items():
         #        print(k + ':' + repr(v))
 
-    def plot_more_often(self):
-        """
-        """
-        num = int(raw_input('\033[92m' + 'Enter a number to plot (or 0 for none): ' + '\033[0m'))
-        if num == 0:
-            return
-
-        delay = []
-        aver = []
-        value = self.all_stat[num - 1]['Occur']
-        for ind in range(len(value) - 1):
-            delay.append(value[ind + 1] - value[ind])
-            aver.append(self.all_stat[num - 1]['Average'])
-
-        plt.plot(delay, label='Delay')
-        plt.plot(aver, label='Average') 
-        plt.title('Delay for number ' + str(num))
-        plt.xlabel('Times raffled')
-        plt.ylabel('Delay between raffles')
-        plt.legend()
-        plt.show()
-
-    def more_often_num(self):
-        """
-        """
-        for each in self.all_content:
-            for el in each["Dozens"]:
-                self.all_stat[int(el) - 1]['Occur'].append(int(each['Number']))
-
-        for ind, val in enumerate(self.all_stat):
-            val['More'] = len(val['Occur'])
-
-    def last_time(self):
-        """
-        """
-        for ind, val in enumerate(self.all_stat):
-            val['Last'] = int(self.all_content[-1]['Number']) - val['Occur'][-1]
-
-    def most_delay(self):
-        """
-        """
-        for el in self.all_stat:
-            dic = {'Delay':[]}
-            for val in range(1, len(el['Occur'])):
-                dic['Delay'].append( el['Occur'][val] - el['Occur'][val - 1] - 1)
-
-            el['Worst'] = max(dic['Delay'])
-            el['Average'] = sum(dic['Delay'])/len(dic['Delay'])
-
-
+    ##### Methods for Plotting #####
     def plot_unit (self):
         """
         """
@@ -218,23 +186,61 @@ class Lottery (object):
             else :
                 print ("I don't understand the command " + cmd)
 
-    def print_more_often_unit (self):
+    def plot_more_often(self):
         """
         """
-        di = {'x0': len(self.unit['x0']),
-              'x1': len(self.unit['x1']),
-              'x2': len(self.unit['x2']),
-              'x3': len(self.unit['x3']),
-              'x4': len(self.unit['x4']),
-              'x5': len(self.unit['x5']),
-              'x6': len(self.unit['x6']),
-              'x7': len(self.unit['x7']),
-              'x8': len(self.unit['x8']),
-              'x9': len(self.unit['x9'])}
+        num = int(raw_input('\033[92m' + 'Enter a number to plot (or 0 for none): ' + '\033[0m'))
+        if num == 0:
+            return
 
-        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
-        for each in sorted_list:
-            print(each)
+        aver = []
+        for ind in range(len(self.all_stat[num - 1]['Occur']) - 1):
+            aver.append(self.all_stat[num - 1]['Average'])
+
+        plt.hist(self.all_stat[num - 1]['Delay'], len(self.all_stat[num - 1]['Delay']))
+        #AQUI
+        #plt.plot(aver, label='Average') 
+        #plt.title('Delay for number ' + str(num))
+        #plt.xlabel('Times raffled')
+        #plt.ylabel('Delay between raffles')
+        #plt.legend()
+        plt.show()
+
+    ##### Methods for Computing #####
+    def build_occur_list(self):
+        for each in self.all_content:
+            for el in each["Dozens"]:
+                self.all_stat[int(el) - 1]['Occur'].append(int(each['Number']))
+
+    def build_delay_list(self):
+        for each in self.all_stat:
+            value = each['Occur']
+            for ind in range(len(value) - 1):
+                each['Delay'].append(value[ind + 1] - value[ind])
+
+    def more_often_num(self):
+        """
+        """
+        for ind, val in enumerate(self.all_stat):
+            val['More'] = len(val['Occur'])
+
+    def last_time(self):
+        """
+        """
+        for ind, val in enumerate(self.all_stat):
+            val['Last'] = int(self.all_content[-1]['Number']) - val['Occur'][-1]
+
+    def most_delay(self):
+        """
+        """
+        for el in self.all_stat:
+            dic = {'Delay':[]}
+            for val in range(1, len(el['Occur'])):
+                dic['Delay'].append( el['Occur'][val] - el['Occur'][val - 1] - 1)
+
+            el['Worst'] = max(dic['Delay'])
+            el['Average'] = sum(dic['Delay'])/len(dic['Delay'])
+
 
     def more_often_unit (self):
         """
