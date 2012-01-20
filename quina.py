@@ -31,7 +31,7 @@ import matplotlib.pyplot as plt
 class QuinaStats (Lottery):
     """
     """
-    def __init__(self, data_file):
+    def __init__(self, data_file, sub_table = 0):
         """
         """
         self.num_dozens = 80
@@ -43,6 +43,8 @@ class QuinaStats (Lottery):
                 try:
                     with open('quina.pickle', 'rb') as data_bin:
                         self.all_content = pickle.load(data_bin)
+                        if sub_table > 0:
+                            self.all_content = self.all_content[:sub_table]
 
                 except IOError as err:
                     print ("File error: " + str(err))
@@ -50,6 +52,8 @@ class QuinaStats (Lottery):
             p = ParsePage(self.doz_by_raffle) 
             p.feed(utils.get_content(data_file))
             self.all_content = p.get_full_data()
+            if sub_table > 0:
+                self.all_content = self.all_content[:sub_table]
             try:
                 with open('quina.pickle', 'wb') as data_bin:
                     pickle.dump(self.all_content, data_bin)
@@ -65,6 +69,9 @@ class QuinaStats (Lottery):
         self.more_often_num()
         self.last_time()
         self.most_delay()
+        self.aver_delay()
+        self.fill_up_stand_dev()
+        self.fill_up_stand_sco()
         self.rule_even_by_odd()
         self.more_often_dozen()
         self.more_often_unit()
@@ -81,7 +88,7 @@ class QuinaStats (Lottery):
               '5x': len(self.doze['5x']),
               '6x': len(self.doze['6x']),
               '7x': len(self.doze['7x']),
-              '8x': len(self.doze['8x'])}
+              '8x': len(self.doze['8x']) * 10}
 
         sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
         for each in sorted_list:
