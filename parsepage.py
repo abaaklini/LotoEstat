@@ -30,9 +30,9 @@ class ParsePage(HTMLParser.HTMLParser):
         HTMLParser.HTMLParser.__init__(self)
         self.inside_td = False
         self.counter = 0
-        self.raffle = {"Number": 0, "Date": "00/00/00",  "Dozens": [], "Accumulated": 'Não'}
+        self.raffle = {"Number": 0, "Date": "00/00/00",  "Dozens": []}
         self.all_content = []
-        self.key = {"Number": 0, "Date": 1, "Dozens": 2, "Accumulated": 2 + self.dozens + 7}
+        self.key = {"Number": 0, "Date": 1, "Dozens": 2}
 
     def handle_starttag(self, tag, attrs):  
         """
@@ -60,8 +60,6 @@ class ParsePage(HTMLParser.HTMLParser):
                 self.raffle["Dozens"].append(data)
             elif self.counter == self.key["Number"]:
                 self.raffle["Number"] = data
-            elif self.counter == self.key["Accumulated"]:
-                self.raffle["Accumulated"] = data
             elif self.counter == self.key["Date"]:
                 self.raffle["Date"] = data
 
