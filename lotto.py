@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
 from quina import QuinaStats
 from sena import SenaStats
+from lotofacil import LotoFacilStats
 
 if __name__ == '__main__':
     done = False
@@ -32,6 +33,7 @@ if __name__ == '__main__':
         print ('')
         print ("quina : show statistics for quina lottery game")
         print ("mega  : show statistics for mega-sena lottery game")
+        print ("facil : show statistics for lotofacil lottery game")
         print ("done  : exit the program")
         print ('')
         cmd = raw_input('\033[92m' + 'Choose the game :' + '\033[0m')
@@ -43,6 +45,9 @@ if __name__ == '__main__':
         elif cmd == 'mega':
             sena = SenaStats('d_megasc.htm')
             sena.screen_interf()
+        elif cmd == 'facil':
+            facil = LotoFacilStats('D_LOTFAC.HTM')
+            facil.screen_interf()
         elif cmd == 'done' :
             done = True
         else :
