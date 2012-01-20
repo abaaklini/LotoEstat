@@ -38,7 +38,7 @@ class Lottery (object):
         """
         """
         for num in range(1, self.num_dozens + 1):
-            self.all_stat.append({'More': 0, 'Last': 0, 'Average': 0, 'Worst': 0, 'Occur': [], 'Delay': [], 'Median': 0})
+            self.all_stat.append({'More': 0, 'Last': 0, 'Average': 0, 'Worst': 0, 'Occur': [], 'Delay': [], 'Std_Dev': 0, 'Std_Sco': 0})
 
     ##### Methods for Printing #####
     def print_more_often_unit (self):
@@ -198,7 +198,6 @@ class Lottery (object):
             aver.append(self.all_stat[num - 1]['Average'])
 
         plt.hist(self.all_stat[num - 1]['Delay'], len(self.all_stat[num - 1]['Delay']))
-        #AQUI
         #plt.plot(aver, label='Average') 
         #plt.title('Delay for number ' + str(num))
         #plt.xlabel('Times raffled')
@@ -208,15 +207,31 @@ class Lottery (object):
 
     ##### Methods for Computing #####
     def build_occur_list(self):
+        """
+        """
         for each in self.all_content:
             for el in each["Dozens"]:
                 self.all_stat[int(el) - 1]['Occur'].append(int(each['Number']))
 
     def build_delay_list(self):
+        """
+        """
         for each in self.all_stat:
             value = each['Occur']
             for ind in range(len(value) - 1):
                 each['Delay'].append(value[ind + 1] - value[ind])
+
+    def fill_up_stand_dev(self):
+        """
+        """
+        for each in self.all_stat:
+            each['Std_Dev'] = utils.standard_deviation(each['Delay'], each['Average'])
+
+    def fill_up_stand_sco(self):
+        """
+        """
+        for each in self.all_stat:
+            each['Std_Sco'] = abs(utils.standard_score(each['Last'], each['Average'], each['Std_Dev']))
 
     def more_often_num(self):
         """
@@ -234,13 +249,13 @@ class Lottery (object):
         """
         """
         for el in self.all_stat:
-            dic = {'Delay':[]}
-            for val in range(1, len(el['Occur'])):
-                dic['Delay'].append( el['Occur'][val] - el['Occur'][val - 1] - 1)
+            el['Worst'] = max(el['Delay'])
 
-            el['Worst'] = max(dic['Delay'])
-            el['Average'] = sum(dic['Delay'])/len(dic['Delay'])
-
+    def aver_delay(self):
+        """
+        """
+        for el in self.all_stat:
+            el['Average'] = int(utils.mean(el['Delay']))
 
     def more_often_unit (self):
         """
@@ -271,7 +286,7 @@ class Lottery (object):
                 elif u == 9:       
                     self.unit['x9'].append(int(each['Number']))
 
-    def suggest_num(self, more_recently=True):
+    def suggest_num(self, method='Score', for_print=True):
         """
         """
 
@@ -284,27 +299,32 @@ class Lottery (object):
             else:
                 el = str(num)
 
-            if more_recently:
-                result[el] = val['More']*2 - val['Last'] # Weight 2
-            else:
-                result[el] = val['More']*2 + val['Last'] # Weight 2
+            if method == 'Most Recently':
+                result[el] = val['More']/100 - val['Last']/10 #
+            elif method == 'Least Recently':
+                result[el] = val['More']/100 + val['Last']/10 #
+            elif method == 'Score':
+                result[el] = val['More']/100 - val['Std_Sco']*2 #
 
             doz = utils.dozen(num)
-            result[el] += len(self.doze[str(doz)+st])/2 #Weight 1/2
+            result[el] += len(self.doze[str(doz)+st])/1000 #Weight 1/10
 
             uni = utils.ret_unit(num)
-            result[el] += len(self.unit[st+str(uni)])/2 #Weight 1/2
+            result[el] += len(self.unit[st+str(uni)])/1000 #Weight 1/10
 
-        print('##################### MORE OFTEN #####################')
-        self.prepare_to_print('More')
-        print('################## MORE OFTEN DOZENS #####################')
-        self.print_more_often_dozen()
-        print('################## MORE OFTEN UNITS #####################')
-        self.print_more_often_unit()
-        print('################# SUGGESTED NUMBERS #####################')
-        sorted_list = sorted(result.items(), key=operator.itemgetter(1), reverse=True)
-        print(sorted_list)
-       
+            sorted_list = sorted(result.items(), key=operator.itemgetter(1), reverse=True)
+        if for_print:
+            print('##################### MORE OFTEN #####################')
+            self.prepare_to_print('More')
+            print('################## MORE OFTEN DOZENS #####################')
+            self.print_more_often_dozen()
+            print('################## MORE OFTEN UNITS #####################')
+            self.print_more_often_unit()
+            print('################# SUGGESTED NUMBERS #####################')
+            print(sorted_list)
+        else:
+            return sorted_list
+
     def look_up_num(self):
         """
         """
@@ -326,7 +346,6 @@ class Lottery (object):
                 print ('')
                 print ('\033[92m' + 'Dozens founded :' + '\033[0m')
                 print ('Date : ' + each['Date'])
-                print ('Accumulated : ' + each['Accumulated'])
            
         if not founded:
             # TODO: Test the numbers with/against the statistics
@@ -372,13 +391,25 @@ class Lottery (object):
                 self.look_up_num()
 
             elif cmd == 'sugm' :
-                self.suggest_num()
+                self.suggest_num(method='Most Recently')
 
             elif cmd == 'sugl' :
-                self.suggest_num(more_recently=False)
+                self.suggest_num(method='Least Recently')
+
+            elif cmd == 'sugs' :
+                self.suggest_num(method='Score')
 
             elif cmd == 'occu' :
                 self.prepare_to_print('Occur')
+
+            elif cmd == 'dela' :
+                self.prepare_to_print('Delay')
+
+            elif cmd == 'devi' :
+                self.prepare_to_print('Std_Dev')
+
+            elif cmd == 'scor' :
+                self.prepare_to_print('Std_Sco')
 
             elif cmd == 'done' :
                 done = True
@@ -398,6 +429,12 @@ class Lottery (object):
                 self.print_more_often_dozen()
                 print('#### UNIT ####')
                 self.print_more_often_unit()
+                self.suggest_num()
+                self.suggest_num(more_recently=False)
+                self.prepare_to_print('Occur')
+                self.prepare_to_print('Delay')
+                self.prepare_to_print('Std_Dev')
+                self.prepare_to_print('Std_Sco')
         
             else :
                 print ("I don't understand the command " + cmd)
