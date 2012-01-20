@@ -22,6 +22,44 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import math
 import codecs
 
+def mean (x_list):
+    r"""
+        >>> mean([1,2,3,4,5,6,7])
+        4.0
+        
+        >>> mean([1,2,3,4,5,6])
+        3.5
+    """
+    return float(sum(x_list))/len(x_list)
+
+def standard_deviation(x_list, x_mean):
+    r"""
+        Is a way of measuring spread, and it's the average of the distance
+        of values from the mean
+
+        >>> standard_deviation([1,2,3,4,5,6], mean([1,2,3,4,5,6]))
+        1.707825127659933
+        
+        >>> standard_deviation([1,2,3,4,5,6,7], mean([1,2,3,4,5,6,7]))
+        2.0
+    """
+    return math.sqrt((float(sum([ x**2 for x in x_list ]))/len(x_list)) - (x_mean ** 2))
+
+def standard_score(x_elem, x_mean, x_stand_deviation):
+    r"""
+        Number of standard deviation from the mean.
+
+        >>> standard_score(75,70,20)
+        0.25
+        
+        >>> standard_score(55,40,10)
+        1.5
+
+        >>> standard_score(35,40,10)
+        -0.5
+    """
+    return (float(x_elem - x_mean) / x_stand_deviation)
+
 def ret_unit(num):
     r"""
         >>> ret_unit(int('01'))
@@ -82,16 +120,20 @@ def print_main_menu ():
     print ('\033[92m' + "The following commands are available: " + '\033[0m')
     print ('')
     print ("aver : show the average delay between raffles")
+    print ("dela : show the number delay between raffles")
+    print ("devi : show the standard deviation of the last delay")
     print ("done : exit the program")
     print ("doze : show the most common dozens over all raffles")
     print ("last : show the last time a numbers arises.")
-    print ("look : look up for a given group of 5 dozens.")
+    print ("look : look up for a given group of dozens.")
     print ("more : show the numbers more often arises.")
     print ("occu : print the list of occurrence of a number during the raffles.")
     print ("rule : show the most common combination of even and odds")
+    print ("scor : show the standard score of the last delay")
     print ("show : show all data in memory.")
     print ("sugl : Suggest the numbers with best statistics and arises less recently")
     print ("sugm : Suggest the numbers with best statistics and arises more recently")
+    print ("sugs : Suggest the numbers with best statistics and are closer from the mean")
     print ("unit : show the most common units over all raffles")
     print ("wors : show the worst delay between raffles")
     print ('')
