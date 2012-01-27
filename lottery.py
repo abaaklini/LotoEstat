@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # -*- coding: iso-8859-15 -*-
 """Copyright (C) 2011 Alexandre Baaklini, abaaklini@gmail.com
 
@@ -38,7 +38,7 @@ class Lottery (object):
         """
         """
         for num in range(1, self.num_dozens + 1):
-            self.all_stat.append({'More': 0, 'Last': 0, 'Average': 0, 'Worst': 0, 'Occur': [], 'Delay': [], 'Std_Dev': 0, 'Std_Sco': 0})
+            self.all_stat.append({'More': 0, 'Last': 0, 'Average': 0, 'Worst': 0, 'Occur': [], 'Delay': [], 'Std_Dev': 0, 'Std_Sco': 0, 'Freq':{}})
 
     ##### Methods for Printing #####
     def print_more_often_unit (self):
@@ -74,6 +74,15 @@ class Lottery (object):
         sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
         print(sorted_list)
 
+    def print_freq_dict(self):
+        """
+        """
+        for ind, each in enumerate(self.all_stat):
+            dic = each['Freq']
+            sorted_list = sorted(dic.items(), key=operator.itemgetter(0), reverse=False)
+            print(str(ind))
+            print(str(sorted_list))
+
     def print_full_data(self):
         """
         """
@@ -81,6 +90,7 @@ class Lottery (object):
             print(el)
         #    for k, v in el.items():
         #        print(k + ':' + repr(v))
+
 
     ##### Methods for Plotting #####
     def plot_unit (self):
@@ -153,10 +163,6 @@ class Lottery (object):
                         delay.append(v[ind + 1] - v[ind])
                     plt.plot(delay, label='x' + opt)
                     print (delay)
-                    plt.title('Delay')
-                    plt.xlabel('Times raffled')
-                    plt.ylabel('Delay between raffles')
-                    plt.legend()
                     plt.show()
 
             elif cmd == 'freq' :
@@ -175,10 +181,6 @@ class Lottery (object):
                     delay.sort()
                     plt.plot(delay, label='x' + opt)
                     print (delay)
-                    plt.title('Delay')
-                    plt.xlabel('Times raffled')
-                    plt.ylabel('Delay between raffles')
-                    plt.legend()
                     plt.show()
 
             elif cmd == 'done' :
@@ -199,10 +201,6 @@ class Lottery (object):
 
         plt.hist(self.all_stat[num - 1]['Delay'], len(self.all_stat[num - 1]['Delay']))
         #plt.plot(aver, label='Average') 
-        #plt.title('Delay for number ' + str(num))
-        #plt.xlabel('Times raffled')
-        #plt.ylabel('Delay between raffles')
-        #plt.legend()
         plt.show()
 
     ##### Methods for Computing #####
@@ -210,7 +208,7 @@ class Lottery (object):
         """
         """
         for each in self.all_content:
-            for el in each["Dozens"]:
+            for el in each['Dozens']:
                 self.all_stat[int(el) - 1]['Occur'].append(int(each['Number']))
 
     def build_delay_list(self):
@@ -220,6 +218,14 @@ class Lottery (object):
             value = each['Occur']
             for ind in range(len(value) - 1):
                 each['Delay'].append(value[ind + 1] - value[ind])
+
+    def build_freq_dict(self):
+        """
+        """
+        for each in self.all_stat:
+            for el in set(each['Delay']):
+                each['Freq'][str(el)] = each['Delay'].count(el)
+
 
     def fill_up_stand_dev(self):
         """
@@ -305,6 +311,11 @@ class Lottery (object):
                 result[el] = val['More']/100 + val['Last']/10 #
             elif method == 'Score':
                 result[el] = val['More']/100 - val['Std_Sco']*2 #
+
+            try:
+                result[el] += val['Freq'][str(val['Last'])]
+            except KeyError:
+                result[el] += 0
 
             doz = utils.dozen(num)
             result[el] += len(self.doze[str(doz)+st])/1000 #Weight 1/10
@@ -411,6 +422,9 @@ class Lottery (object):
             elif cmd == 'scor' :
                 self.prepare_to_print('Std_Sco')
 
+            elif cmd == 'freq':
+                self.print_freq_dict()
+
             elif cmd == 'done' :
                 done = True
 
@@ -430,7 +444,8 @@ class Lottery (object):
                 print('#### UNIT ####')
                 self.print_more_often_unit()
                 self.suggest_num()
-                self.suggest_num(more_recently=False)
+                self.suggest_num(method='Most Recently')
+                self.suggest_num(method='Least Recently')
                 self.prepare_to_print('Occur')
                 self.prepare_to_print('Delay')
                 self.prepare_to_print('Std_Dev')
