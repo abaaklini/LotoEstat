@@ -1,10 +1,11 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # -*- coding: iso-8859-15 -*-
 
 from quina import QuinaStats
 import pdb
 import random
 import utils
+import sys
 
 def random_num ():
     result = []
@@ -26,7 +27,7 @@ def random_num ():
             result.append((str(temp), 0))
     return result
 
-if __name__ == '__main__':
+def main():
 
     suggested = []
     start = 150
@@ -34,35 +35,54 @@ if __name__ == '__main__':
     quina = QuinaStats('D_QUINA.HTM', start - 1)
     stat = {'0ac':0, '1ac':0, '2ac':0, '3ac':0, '4ac':0, '5ac':0}
 
-    # um mesmo numero aleatorio para todos os sorteios
-    #result = random_num()
+    if len(sys.argv) < 2 or sys.argv[1] not in ['score', 'most', 'least', 'rand_all', 'rand_one']:
+        print ('Usage : %s  [score|most|least|rand_all|rand_one]' % (sys.argv[0],))
+        return 1
+
+    if sys.argv[1] == 'rand_one':
+        # um mesmo numero aleatorio para todos os sorteios
+        result = random_num()
+
+    method = None
+
+    if sys.argv[1] == 'score':
+        method = 'Score'
+
+    if sys.argv[1] == 'most':
+        method = 'Most Recently'
+
+    if sys.argv[1] == 'least':
+        method = 'Least Recently'
 
     for ind in range(start, end):
-        result = quina.suggest_num(method='Score', for_print=False)
-        #result = quina.suggest_num(method='Most Recently', for_print=False)
-        #result = quina.suggest_num(method='Least Recently', for_print=False)
-        #um numero aleatorio a cada sorteio
-        #result = random_num()
+        if method:
+            result = quina.suggest_num(method, for_print=False)
+            par = 0
+            impar = 0
+            aux_list = []
 
-        par = 0
-        impar = 0
-        aux_list = []
+            for el in result:
+                if len(aux_list) >= 7:
+                    break
 
-        for el in result:
-            if len(aux_list) >= 7:
-                break
+                if utils.isodd(int(el[0])):
+                    if impar < 3:
+                        aux_list.append(el)
+                        impar += 1
+                elif not utils.isodd(int(el[0])):
+                    if par < 4:
+                        aux_list.append(el)
+                        par += 1
 
-            if utils.isodd(int(el[0])):
-                if impar < 3:
-                    aux_list.append(el)
-                    impar += 1
-            elif not utils.isodd(int(el[0])):
-                if par < 4:
-                    aux_list.append(el)
-                    par += 1
+            result = aux_list[:7]
 
-        result = aux_list[:7]
-        #result = result[:7]
+        elif sys.argv[1] == 'rand_all':
+            result = random_num()
+            result = result[:7]
+
+        else:
+            result = result[:7]
+
         for each in result:
             (x,y) = each
             suggested.append(x)
@@ -83,8 +103,10 @@ if __name__ == '__main__':
         elif num_acertos == 4 : stat['4ac'] += 1
         elif num_acertos == 5 : stat['5ac'] += 1
 
-        both_value = (suggested, doz_aux)
+        both_value = (sorted(suggested), doz_aux)
         print (both_value)
         suggested = []
 
     print(stat)
+if __name__ == '__main__': main()
+
