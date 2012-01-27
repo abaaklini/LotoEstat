@@ -2,11 +2,11 @@ TODO:
     - DONE split the code to different files
     - DONE adapt to Mega-Sena
     - Fix the Unicode problem on all_content
-    - Find the average a number arise; ("More")
-    - Find the deviation by de media; ("More")
-    - Positioning the number in the quartiles; ("More")
-    - Find the deviation by de media; ("Delay")
-    - Positioning the number in the quartiles; ("Delay")
+    - DONE Find the average a number arise; ("More")
+    - DONE Find the deviation by media; ("More")
+    - DONE Positioning the number in the quartiles; ("More")
+    - DONE Find the deviation by de media; ("Delay")
+    - DONE Positioning the number in the quartiles; ("Delay")
     - Calculate the probability of a number been raffled, based upon it's score;("Sugm/Sugl")
     - create unit test;
     - create package;
@@ -20,5 +20,5 @@ TODO:
     - make money with it;
     - adapt to Dupla-Sena (More difficult due to data stored in different formats)
     - adapt to Lotomania (More difficult due to data stored in different formats)
-    - adapt to Lotofacil (More difficult due to data stored in different formats)
+    - DONE adapt to Lotofacil (More difficult due to data stored in different formats)
     - adapt to an US or UK lottery (More difficult due to data stored in different formats);
