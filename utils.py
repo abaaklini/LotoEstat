@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 # -*- coding: iso-8859-15 -*-
 """Copyright (C) 2011 Alexandre Baaklini, abaaklini@gmail.com
 
@@ -124,6 +124,7 @@ def print_main_menu ():
     print ("devi : show the standard deviation of the last delay")
     print ("done : exit the program")
     print ("doze : show the most common dozens over all raffles")
+    print ("freq : show the frequency of each delay time")
     print ("last : show the last time a numbers arises.")
     print ("look : look up for a given group of dozens.")
     print ("more : show the numbers more often arises.")
