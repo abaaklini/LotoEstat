@@ -24,6 +24,7 @@ import pickle
 import utils
 from parsepage import ParsePage
 import operator
+from time import ctime
 
 class QuinaStats (Lottery):
     """
@@ -33,12 +34,14 @@ class QuinaStats (Lottery):
         """
         self.num_dozens = 80
         self.doz_by_raffle = 5
+        self.updated = ctime(os.path.getmtime(data_file))
 
         Lottery.__init__(self)
         if os.path.exists('data/quina.pickle'):
+            self.updated = os.path.getmtime(data_file)
             if os.path.getmtime('data/quina.pickle') > os.path.getmtime(data_file):
                 try:
-                    data_bin = open('data/quina.pickle', 'rb')
+                    data_bin = open('../data/quina.pickle', 'rb')
                     self.all_content = pickle.load(data_bin)
                     if sub_table > 0:
                             self.all_content = self.all_content[:sub_table]

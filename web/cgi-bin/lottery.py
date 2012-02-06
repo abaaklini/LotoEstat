@@ -85,6 +85,11 @@ class Lottery (object):
         #    for k, v in el.items():
         #        print(k + ':' + repr(v))
 
+    def print_updated_data(self):
+        """
+        """
+        return self.updated
+
     ##### Methods for Computing #####
     def build_occur_list(self):
         """

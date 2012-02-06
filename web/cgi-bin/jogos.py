@@ -38,24 +38,24 @@ def main():
     print(yate.include_header('Estatísticas para Loterias do Brasil'))
     
     if not form_data:
-        print(yate.para('Escolha um jogo abaixo: '))
+        print(yate.header('Escolha um jogo: ', header_level=3))
         print(yate.start_form('jogos.py'))
         print(yate.drop_box('Jogos', {'Quina':'Quina',
             'Mega-Sena': 'Mega-Sena',
-            'Lotofacil':'LotoFácil'}, 'Quina'))
+            'LotoFácil':'LotoFácil'}, 'Mega-Sena'))
     
-        print(yate.para('Escolha uma estatística abaixo: '))
+        print(yate.header('Escolha uma estatística: ', header_level=3))
         print(yate.drop_box('Estat', {
-            'more': 'Mais Sorteado',
-            'rule': 'Distribuição entre Pares e Impares',
-            'unit': 'Unidades Mais Sorteadas',
             'doze': 'Dezenas Mais Sorteadas',
-            'last': 'Última vez sorteado',
+            'rule': 'Distribuição entre Pares e Impares',
             'wors': 'Maior tempo sem ser sorteado',
+            'more': 'Mais Sorteado',
             'aver': 'Média de tempo sem ser sorteado',
-            'sugm': 'Sugere números sorteados recentemente',
+            'sugs': 'Sugere números com melhor escore padrão',
             'sugl': 'Sugere números menos sorteados recentemente',
-            'sugs': 'Sugere números com melhor escore padrão'},
+            'sugm': 'Sugere números sorteados recentemente',
+            'last': 'Última vez sorteado',
+            'unit': 'Unidades Mais Sorteadas'},
             'more'))
     
         print(yate.end_form('Enviar'))
@@ -64,14 +64,14 @@ def main():
         jogo = form_data.getvalue('Jogos')
         estat = form_data.getvalue('Estat')
         if jogo == 'Quina':
-            obj = QuinaStats('data/D_QUINA.HTM')
+            obj = QuinaStats('../data/D_QUINA.HTM')
         elif jogo == 'Mega-Sena':
-            obj = SenaStats('data/d_megasc.htm')
-        elif jogo == 'Lotofacil':
-            obj = LotoFacilStats('data/D_LOTFAC.HTM')
+            obj = SenaStats('../data/d_megasc.htm')
+        elif jogo == 'LotoFácil':
+            obj = LotoFacilStats('../data/D_LOTFAC.HTM')
         else:
             print(yate.para('Opção Inexistente'))
-            print(yate.include_footer({'Início': '/index.html', 'Escolha Outro Jogo': 'jogos.py'}))
+            print(yate.include_footer('&copy LotoEstat 2012'))
             return
     
         if form_data.getvalue('Estat') == 'more':
@@ -79,7 +79,7 @@ def main():
             print(yate.para('Lista decrescente dos números mais sorteados da ' + form_data.getvalue('Jogos') + '.'))
             
             to_print = obj.prepare_to_print('More', for_print=False)
-            print(yate.start_tb(['Dezena', 'Número de Vezes Sorteado']))
+            print(yate.start_tb(['Dezena ', ' Número de Vezes Sorteado']))
             for each in to_print:
                 print(yate.inner_tb([each[0],each[1]]))
             print(yate.end_tb())
@@ -88,7 +88,7 @@ def main():
             print(yate.header('Distribuição entre Pares e Impares'))
             print(yate.para('Combinação de pares e ímpares entre os números da ' + form_data.getvalue('Jogos') + '.'))
             to_print = obj.print_rule_even_by_odd(for_print=False) 
-            print(yate.start_tb(['Número de Pares', 'Número de Ímpares', 'Número de Vezes Sorteado']))
+            print(yate.start_tb(['Dezenas Pares ', ' Dezenas Ímpares ', ' Número de Vezes Sorteado']))
             p = re.compile('\d+')
             for each in to_print:
                 even, odd = p.findall(each[0])
@@ -99,7 +99,7 @@ def main():
             print(yate.header('Unidades Mais Sorteadas'))
             print(yate.para('Lista das Unidades mais Sorteadas dos Jogos da ' + form_data.getvalue('Jogos') + '.'))
             to_print = obj.print_more_often_unit(for_print=False) 
-            print(yate.start_tb(['Números terminados em', 'Número de Vezes Sorteado']))
+            print(yate.start_tb(['Dezenas terminadas em ', ' Número de Vezes Sorteado']))
             p = re.compile('\d+')
             for each in to_print:
                 unidade = p.findall(each[0])
@@ -110,7 +110,7 @@ def main():
             print(yate.header('Dezenas Mais Sorteadas'))
             print(yate.para('Lista das Dezenas mais Sorteadas dos Jogos da ' + form_data.getvalue('Jogos') + '.'))
             to_print = obj.print_more_often_dozen(for_print=False) 
-            print(yate.start_tb(['Números Começados por', 'Número de Vezes Sorteado']))
+            print(yate.start_tb(['Dezenas Começadas por ', ' Número de Vezes Sorteado']))
             p = re.compile('\d+')
             for each in to_print:
                 dezena = p.findall(each[0])
@@ -119,10 +119,10 @@ def main():
         
         elif form_data.getvalue('Estat') == 'last':
             print(yate.header('Última vez Sorteado'))
-            print(yate.para('Número de sorteios em que o número fica de fora das dezenas sorteadas da' + form_data.getvalue('Jogos') + '.'))
+            print(yate.para('A quanto tempo a dezena não é sorteada entre os números premiados da ' + form_data.getvalue('Jogos') + '.'))
             
             to_print = obj.prepare_to_print('Last', for_print=False)
-            print(yate.start_tb(['Número', 'Tempo sem ser sorteado']))
+            print(yate.start_tb(['Dezena ', ' Tempo sem ser sorteada']))
             for each in to_print:
                 print(yate.inner_tb([each[0],each[1]]))
             print(yate.end_tb())
@@ -132,7 +132,7 @@ def main():
             print(yate.para('Pior tempo de espera que um número aguardou para ser sorteado entre todos os sorteios da ' + form_data.getvalue('Jogos') + '.'))
             
             to_print = obj.prepare_to_print('Worst', for_print=False)
-            print(yate.start_tb(['Número', 'Pior tempo sem ser sorteado']))
+            print(yate.start_tb(['Dezena ', ' Pior tempo sem ser sorteada']))
             for each in to_print:
                 print(yate.inner_tb([each[0],each[1]]))
             print(yate.end_tb())
@@ -142,7 +142,7 @@ def main():
             print(yate.para('Tempo médio que um número leva até ser sorteado, obtidos à partir do histórico de resultados  da ' + form_data.getvalue('Jogos') + '.'))
             
             to_print = obj.prepare_to_print('Average', for_print=False)
-            print(yate.start_tb(['Número', 'Média de espera entre dois sorteios']))
+            print(yate.start_tb(['Dezena ', ' Média de espera entre dois sorteios']))
             for each in to_print:
                 print(yate.inner_tb([each[0],each[1]]))
             print(yate.end_tb())
@@ -155,7 +155,7 @@ def main():
                 dez_sug = 7 
             elif form_data.getvalue('Jogos') == 'Mega-Sena':
                 dez_sug = 15 
-            elif form_data.getvalue('Jogos') == 'Lotofacil':
+            elif form_data.getvalue('Jogos') == 'LotoFácil':
                 dez_sug = 15 
 
             cabecalho_tabela = []
@@ -176,7 +176,7 @@ def main():
                 dez_sug = 7 
             elif form_data.getvalue('Jogos') == 'Mega-Sena':
                 dez_sug = 15
-            elif form_data.getvalue('Jogos') == 'Lotofacil':
+            elif form_data.getvalue('Jogos') == 'LotoFácil':
                 dez_sug = 15
 
             cabecalho_tabela = []
@@ -197,7 +197,7 @@ def main():
                 dez_sug = 7 
             elif form_data.getvalue('Jogos') == 'Mega-Sena':
                 dez_sug = 15
-            elif form_data.getvalue('Jogos') == 'Lotofacil':
+            elif form_data.getvalue('Jogos') == 'LotoFácil':
                 dez_sug = 15
 
             cabecalho_tabela = []
@@ -210,9 +210,11 @@ def main():
             print(yate.inner_tb(lis))
             print(yate.end_tb())
         
+        print(yate.para('Atualizado em : %s') % obj.print_updated_data())
+
     else :
         print(yate.para('Opção por Jogo ou Estatística não efetuada.'))
     
-    print(yate.include_footer({'Início': '/index.html', 'Escolha Outro Jogo': 'jogos.py'}))
+    print(yate.include_footer('&copy LotoEstat 2012'))
 
 main()

@@ -24,6 +24,7 @@ import pickle
 import utils
 from parsepage import ParsePage
 import operator
+from time import ctime
 
 class LotoFacilStats (Lottery):
     """
@@ -33,12 +34,14 @@ class LotoFacilStats (Lottery):
         """
         self.num_dozens = 25
         self.doz_by_raffle =15 
+        self.updated = ctime(os.path.getmtime(data_file))
 
         Lottery.__init__(self)
         if os.path.exists('data/facil.pickle'):
+            self.updated = os.path.getmtime(data_file)
             if os.path.getmtime('data/facil.pickle') > os.path.getmtime(data_file):
                 try:
-                    data_bin = open('data/facil.pickle', 'rb')
+                    data_bin = open('../data/facil.pickle', 'rb')
                     self.all_content = pickle.load(data_bin)
                     if sub_table > 0:
                         self.all_content = self.all_content[:sub_table]
@@ -54,7 +57,7 @@ class LotoFacilStats (Lottery):
             if sub_table > 0:
                 self.all_content = self.all_content[:sub_table]
             try:
-                data_bin = open('data/facil.pickle', 'wb')
+                data_bin = open('../data/facil.pickle', 'wb')
                 pickle.dump(self.all_content, data_bin)
 
             except IOError, err:

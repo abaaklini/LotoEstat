@@ -5,18 +5,22 @@ def start_response(resp="text/html"):
     return('Content-type: ' + resp + '\n\n')
 
 def include_header(the_title):
-    headf = open('templates/header.html')
+    headf = open('../templates/header.html')
     head_text = headf.read()
     header = Template(head_text)
     headf.close()
     return(header.substitute(title=the_title))
 
 def include_footer(the_links):
-    footf = open('templates/footer.html')
+    footf = open('../templates/footer.html')
     foot_text = footf.read()
     link_string = ''
-    for key in the_links:
-        link_string += '<a href="' + the_links[key] + '">' + key + '</a>&nbsp;&nbsp;&nbsp;&nbsp;'
+    if isinstance(the_links, dict):
+        for key in the_links:
+            link_string += '<a href="' + the_links[key] + '">' + key + '</a>&nbsp;&nbsp;&nbsp;&nbsp;'
+    else:
+        link_string += the_links
+
     footer = Template(foot_text)
     footf.close()
     return(footer.substitute(links=link_string))
