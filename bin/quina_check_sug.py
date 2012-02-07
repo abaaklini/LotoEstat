@@ -32,7 +32,7 @@ def main():
     suggested = []
     start = 150
     end = 2801
-    quina = QuinaStats('D_QUINA.HTM', start - 1)
+    quina = QuinaStats('../data/D_QUINA.HTM', start - 1)
     stat = {'0ac':0, '1ac':0, '2ac':0, '3ac':0, '4ac':0, '5ac':0}
 
     if len(sys.argv) < 2 or sys.argv[1] not in ['score', 'most', 'least', 'rand_all', 'rand_one']:
@@ -87,7 +87,7 @@ def main():
             (x,y) = each
             suggested.append(x)
 
-        quina = QuinaStats('D_QUINA.HTM', ind)
+        quina = QuinaStats('../data/D_QUINA.HTM', ind)
         dozens = quina.all_content[-1]['Dozens']
         doz_aux = []
         num_acertos = 0
