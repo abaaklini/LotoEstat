@@ -38,20 +38,18 @@ def main():
     print(yate.include_header('Estatísticas para Loterias do Brasil'))
     
     if not form_data:
-        print(yate.header('Escolha um jogo: ', header_level=3))
-        print(yate.start_form('jogos.py'))
-        print(yate.drop_box('Jogos', {'Quina':'Quina',
+        print(yate.start_form('', 'jogos.py'))
+        print(yate.drop_box('Jogo: ', 'Jogos', {'Quina':'Quina',
             'Mega-Sena': 'Mega-Sena',
             'LotoFácil':'LotoFácil'}, 'Mega-Sena'))
     
-        print(yate.header('Escolha uma estatística: ', header_level=3))
-        print(yate.drop_box('Estat', {
+        print(yate.drop_box('Estatística: ', 'Estat', {
             'doze': 'Dezenas Mais Sorteadas',
             'rule': 'Distribuição entre Pares e Impares',
             'wors': 'Maior tempo sem ser sorteado',
             'more': 'Mais Sorteado',
             'aver': 'Média de tempo sem ser sorteado',
-            'sugs': 'Sugere números com melhor escore padrão',
+            'sugs': 'Sugere números com melhor Escore Z',
             'sugl': 'Sugere números menos sorteados recentemente',
             'sugm': 'Sugere números sorteados recentemente',
             'last': 'Última vez sorteado',
@@ -210,7 +208,7 @@ def main():
             print(yate.inner_tb(lis))
             print(yate.end_tb())
         
-        print(yate.para('Atualizado em : %s') % obj.print_updated_data())
+        print(yate.header('Atualizado em : %s', header_level=6) % obj.print_updated_data())
 
     else :
         print(yate.para('Opção por Jogo ou Estatística não efetuada.'))

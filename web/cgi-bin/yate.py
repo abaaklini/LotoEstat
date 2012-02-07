@@ -25,23 +25,27 @@ def include_footer(the_links):
     footf.close()
     return(footer.substitute(links=link_string))
 
-def start_form(the_url, form_type="POST"):
-    return('<form action="' + the_url + '" method="' + form_type + '">')
+def start_form(legend, the_url, form_type="POST"):
+    form = '\n<form action="' + the_url + '" method="' + form_type + '">\n<fieldset>\n <legend>' + legend + '</legend>'
+    return(form)
 
 def end_form(submit_msg="Submit"):
-    return('<p></p><input type=submit value="' + submit_msg + '"></form>')
+    return('<div class="clearfix"><div class="input"><input type=submit value="' + submit_msg + '"></div></div></fieldset></form>')
 
 def radio_button(rb_name, rb_value):
     return('<input type="radio" name="' + rb_name +
                              '" value="' + rb_value + '"> ' + rb_value + '<br />')
-def drop_box(drop_name, op_dict, selected):
-    dropbox = '<select name="' + drop_name + '">' 
+def drop_box(drop_title, drop_name, op_dict, selected):
+    dropbox = '\n<div class="clearfix">'
+    dropbox += '\n<label for="' + drop_name + '">' + drop_title + '</label>'
+    dropbox += '\n<div class="input">'
+    dropbox += ' \n<select name="' + drop_name + '" id="' + drop_name + '">' 
     for key, value in op_dict.items():
-        dropbox += '<option value="' + key + '"'
+        dropbox += '\n<option value="' + key + '"'
         if key == selected:
             dropbox += 'selected'
         dropbox += '>' + value + '</option>'
-    dropbox += '</select>'
+    dropbox += '</select>\n</div>\n</div>'
     return dropbox
 
 def u_list(items):
@@ -59,7 +63,7 @@ def para(para_text):
     return('<p>' + para_text + '</p>') 
 
 def start_tb (hd_list):
-    table = '<table><tr>'
+    table = '<table class="condensed-table"><tr>'
     for el in hd_list:
         table += '<th>' + str(el) + '</th>'
     table += '</tr>'
@@ -74,3 +78,9 @@ def inner_tb(row_list):
         table += '<td>' + str(el) + '</td>'
     table += '</tr>'
     return table
+
+def open_div(Class):
+    return ('<div class=' + Class + '>')
+
+def close_div():
+    return ('</div>')
