@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8">
+    <title>LotoEstat</title>
+    <meta name="description" content="Estatísticas para os principais jogos da Loteria.">
+    <meta name="author" content="Alexandre Baaklini">
+    <meta name="keywords" content="Loto, Loteria, Mega-Sena, Quina, LotoFácil, Estatística, Caixa" />
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+      }
+    </style>
+
+    <!-- Le fav icon -->
+    <link rel="shortcut icon" href="assets/img/favicon.ico">
+  </head>
+
+  <body>
+
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <a class="brand" href="/index.html">LotoEstat</a>
+          <ul class="nav">
+            <li><a href="/index.html">Início</a></li>
+            <li><a href="/cgi-bin/jogos.py">Estatísticas</a></li>
+            <li class="active"><a href="#">Sobre</a></li>
+            <li><a href="/contact.html">Contato</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit">
+        <h2>Perguntas mais frequentes</h2>
+        <dl>
+          <dt><h4><strong>Como surgiu a ideia do LotoEstat?</strong></h4></dt>
+          <dd>O LotoEstat surgiu, a partir do interesse de seu autor, em explorar o ambiente de desenvolvimento web,
+          através do uso de modernas tecnologias como Python, mas deixando de lado o uso de frameworks e adotando o 
+          padrão Common Gateway Interface (CGI), como forma de percorrer todas as etapas necessárias ao desenvolvimento web.
+          </dd>
+          <dt><h4><strong>Que recursos da biblioteca padrão do Python, foram utilizados?</strong></h4></dt>
+          <dd>Uma das premissas utilizadas no desenvolvimento do aplicativo, foi a escolha apenas de bibliotecas que fossem
+          definidas como padrão pela comunidade Python, com o intuito de melhorar o conhecimento do autor neste vasto 
+          universo de recursos disponíveis, assim como aumentar a portabilidade da aplicação. Dentre elas estão: StringIO, zipfile, urllib2,
+          logging, cgi, re, HTMLParser, math, codecs e Template.</dd>
+          <dt><h4><strong>Como os "números sugeridos" são gerados?</strong></h4></dt>
+          <dd>A partir das estatísticas feitas pelo aplicativo, foram criadas três formas de sugestão de números. Todas elas levam em conta
+          os números que mais vezes foram sorteados e a distribuição igualitária entre pares e impares. O que as diferencia é a importância que dão
+          para os números que estão a mais ou menos tempo sem serem sorteados e a distância que este valor se encontra do seu desvio padrão.</dd>
+          <dt><h4><strong>Como posso sugerir uma nova estatística para ser incluída no aplicativo?</strong></h4></dt>
+          <dd>É simples, basta enviar um email para contato@lotoestat.com.br, descrevendo com bastante detalhe sua sugestão e se ela for aceita,
+          em pouco tempo estará disponível junto ao aplicativo.</dd>
+          <dt><h4><strong>Ganhei um prêmio da loteria, utilizando um dos números sugeridos pelo LotoEstat. O que devo fazer?</strong></h4></dt>
+          <dd>Gaste o valor com cautela! Caso você tenha ficado grato com o LotoEstat por isso, considere a possibilidade de doar uma pequena parcela para a manutenção do aplicativo ;-)</dd>
+        </dl>
+        <p></p>
+
+      </div>
+
+      <footer>
+        <p>&copy; LotoEstat 2012</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+  </body>
+</html>
