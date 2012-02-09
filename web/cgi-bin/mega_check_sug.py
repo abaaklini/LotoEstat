@@ -37,7 +37,7 @@ if __name__ == '__main__':
     suggested = []
     start = 100
     end = 1354
-    sena = SenaStats('d_megasc.htm', start - 1)
+    sena = SenaStats('../data/d_megasc.htm', start - 1)
     stat = {'0ac':0, '1ac':0, '2ac':0, '3ac':0, '4ac':0, '5ac':0, '6ac':0}
 
     # um mesmo numero aleatorio para todos os sorteios
@@ -73,7 +73,7 @@ if __name__ == '__main__':
             (x,y) = each
             suggested.append(x)
 
-        sena = SenaStats('d_megasc.htm', ind)
+        sena = SenaStats('../data/d_megasc.htm', ind)
         dozens = sena.all_content[-1]['Dozens']
         doz_aux = []
         num_acertos = 0

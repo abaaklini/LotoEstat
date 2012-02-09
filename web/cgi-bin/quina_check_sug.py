@@ -60,19 +60,41 @@ def main():
             par = 0
             impar = 0
             aux_list = []
+            start = 0
+            finished = False
 
-            for el in result:
-                if len(aux_list) >= 7:
-                    break
+            while not finished:
+                for el in result[start:]:
+                    start += 1
+                    if len(aux_list) >= 7:
+                        break
 
-                if utils.isodd(int(el[0])):
-                    if impar < 3:
-                        aux_list.append(el)
-                        impar += 1
-                elif not utils.isodd(int(el[0])):
-                    if par < 4:
-                        aux_list.append(el)
-                        par += 1
+                    if utils.isodd(int(el[0])):
+                        if impar < 3:
+                            aux_list.append(int(el[0]))
+                            impar += 1
+                    elif not utils.isodd(int(el[0])):
+                        if par < 4:
+                            aux_list.append(int(el[0]))
+                            par += 1
+
+                if sum(aux_list) < 196:
+                    menor = min(aux_list)
+                    aux_list.remove(menor)
+                    if utils.isodd(menor):
+                        impar -= 1
+                    else:
+                        par -= 1
+
+                elif sum(aux_list) > 380:
+                    maior = max(aux_list)
+                    aux_list.remove(maior)
+                    if utils.isodd(maior):
+                        impar -= 1
+                    else:
+                        par -= 1
+                else:
+                    finished = True
 
             result = aux_list[:7]
 
@@ -84,15 +106,14 @@ def main():
             result = result[:7]
 
         for each in result:
-            (x,y) = each
-            suggested.append(x)
+            suggested.append(each)
 
         quina = QuinaStats('../data/D_QUINA.HTM', ind)
         dozens = quina.all_content[-1]['Dozens']
         doz_aux = []
         num_acertos = 0
         for doz_elem in dozens:
-            if doz_elem in suggested:
+            if int(doz_elem) in suggested:
                 doz_aux.append(doz_elem)
                 num_acertos += 1
 
