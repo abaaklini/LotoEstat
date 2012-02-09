@@ -69,6 +69,7 @@ class QuinaStats (Lottery):
         self.doze = {"0x": [], "1x": [], "2x": [], "3x": [], "4x": [], "5x": [], "6x": [], "7x": [], "8x": []}
         self.build_occur_list()
         self.build_delay_list()
+        self.build_freq_dict()
         self.more_often_num()
         self.last_time()
         self.most_delay()

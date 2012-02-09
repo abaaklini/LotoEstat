@@ -65,6 +65,7 @@ class SenaStats (Lottery):
         self.even_odd = {"e0xo6": [], "e1xo5": [], "e2xo4": [], "e3xo3": [], "e4xo2": [], "e5xo1": [], "e6xo0": []}
         self.doze = {"0x": [], "1x": [], "2x": [], "3x": [], "4x": [], "5x": [], "6x": []}
         self.build_occur_list()
+        self.build_freq_dict()
         self.build_delay_list()
         self.more_often_num()
         self.last_time()

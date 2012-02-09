@@ -35,7 +35,7 @@ class Lottery (object):
         """
         """
         for num in range(1, self.num_dozens + 1):
-            self.all_stat.append({'More': 0, 'Last': 0, 'Average': 0, 'Worst': 0, 'Occur': [], 'Delay': [], 'Std_Dev': 0, 'Std_Sco': 0})
+            self.all_stat.append({'More': 0, 'Last': 0, 'Average': 0, 'Worst': 0, 'Occur': [], 'Delay': [], 'Std_Dev': 0, 'Std_Sco': 0, 'Freq':{}})
 
     ##### Methods for Printing #####
     def print_more_often_unit (self, for_print=True):
@@ -77,6 +77,15 @@ class Lottery (object):
         else:
             return sorted_list
 
+    def print_freq_dict(self):
+        """
+        """
+        for ind, each in enumerate(self.all_stat):
+            dic = each['Freq']
+            sorted_list = sorted(dic.items(), key=operator.itemgetter(0), reverse=False)
+            print(str(ind))
+            print(str(sorted_list))
+
     def print_full_data(self):
         """
         """
@@ -89,6 +98,25 @@ class Lottery (object):
         """
         """
         return self.updated
+
+    def print_sum(self):
+        total = 0
+        dentro = 0
+        lis = []
+        for each in self.all_content:
+            res = 0
+            total += 1
+            for el in each["Dozens"]:
+                res += int(el)
+            if 140 < res < 271:
+                dentro +=1
+            lis.append(res)
+        print str(dentro) + '/' + str(total)
+        print float(dentro)/total
+        print sorted(lis)
+        import matplotlib.pyplot as plt
+        plt.hist(sorted(lis))
+        plt.show()
 
     ##### Methods for Computing #####
     def build_occur_list(self):
@@ -105,6 +133,14 @@ class Lottery (object):
             value = each['Occur']
             for ind in range(len(value) - 1):
                 each['Delay'].append(value[ind + 1] - value[ind])
+
+    def build_freq_dict(self):
+        """
+        """
+        for each in self.all_stat:
+            for el in set(each['Delay']):
+                each['Freq'][str(el)] = each['Delay'].count(el)
+
 
     def fill_up_stand_dev(self):
         """
@@ -190,6 +226,11 @@ class Lottery (object):
                 result[el] = val['More']/100 + val['Last']/10 #
             elif method == 'Score':
                 result[el] = val['More']/100 - val['Std_Sco']*2 #
+
+            #try:
+            #    result[el] += val['Freq'][str(val['Last'])]
+            #except KeyError:
+            #    result[el] += 0
 
             doz = utils.dozen(num)
             result[el] += len(self.doze[str(doz)+st])/1000 #Weight 1/10
@@ -295,6 +336,12 @@ class Lottery (object):
 
             elif cmd == 'scor' :
                 self.prepare_to_print('Std_Sco')
+
+            elif cmd == 'freq':
+                self.print_freq_dict()
+
+            elif cmd == 'summ' :
+                self.print_sum()
 
             elif cmd == 'done' :
                 done = True

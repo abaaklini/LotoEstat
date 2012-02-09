@@ -65,6 +65,7 @@ class LotoFacilStats (Lottery):
         self.even_odd = {"e0xo15": [], "e1xo14": [], "e2xo13": [], "e3xo12": [], "e4xo11": [], "e5xo10": [], "e6xo9": [], "e7xo8": [], "e8xo7": [], "e9xo6": [], "e10xo5": [], "e11xo4": [], "e12xo3": [], "e13xo2": [], "e14xo1": [], "e15xo0": []}
         self.doze = {"0x": [], "1x": [], "2x": []}
         self.build_occur_list()
+        self.build_freq_dict()
         self.build_delay_list()
         self.more_often_num()
         self.last_time()
