@@ -1,0 +1,15 @@
+*.pyc
+*.hi
+*.swp
+*.o
+*.pickle
+*.log
+/tags
+/etags
+/build/
+/dist/
+/doc/build/
+/bin/data
+/bin/log
+/bin/temp
+/web/cgi-bin/lotoestat/

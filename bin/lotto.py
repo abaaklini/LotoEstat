@@ -40,13 +40,13 @@ if __name__ == '__main__':
         print ('')
 
         if cmd == 'quina':
-            quina = QuinaStats('D_QUINA.HTM')
+            quina = QuinaStats('./data/D_QUINA.HTM')
             quina.screen_interf()
         elif cmd == 'mega':
-            sena = SenaStats('d_megasc.htm')
+            sena = SenaStats('./data/d_megasc.htm')
             sena.screen_interf()
         elif cmd == 'facil':
-            facil = LotoFacilStats('D_LOTFAC.HTM')
+            facil = LotoFacilStats('./data/D_LOTFAC.HTM')
             facil.screen_interf()
         elif cmd == 'done' :
             done = True
