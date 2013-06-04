@@ -8,6 +8,7 @@ TODO:
     - DONE Positioning the number in the quartiles; ("Delay")
     - DONE adapt to Lotofacil (More difficult due to data stored in different formats)
     - DONE make this app in a Web App;
+    - If the directories and files doesn't exist, create it
     - Fix the Unicode problem on all_content
     - Calculate the probability of a number been raffled, based upon it's score;("Sugm/Sugl")
     - create unit test;
