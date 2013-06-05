@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from __future__ import print_function
 from lottery import Lottery
-import pdb
 import os
 import pickle
 import utils
@@ -36,46 +35,10 @@ class LotoFacilStats (Lottery):
         """
         self.num_dozens = 25
         self.doz_by_raffle =15 
+        self.dozen_dozens = 2
+        self.pickle_file = 'facil.pickle'
 
-        Lottery.__init__(self)
-        if os.path.exists('facil.pickle'):
-            if os.path.getmtime('facil.pickle') > os.path.getmtime(data_file):
-                try:
-                    with open('facil.pickle', 'rb') as data_bin:
-                        self.all_content = pickle.load(data_bin)
-                        if sub_table > 0:
-                            self.all_content = self.all_content[:sub_table]
-
-                except IOError as err:
-                    print ("File error: " + str(err))
-        else:
-            p = ParsePage(self.doz_by_raffle) 
-            p.feed(utils.get_content(data_file))
-            self.all_content = p.get_full_data()
-            if sub_table > 0:
-                self.all_content = self.all_content[:sub_table]
-            try:
-                with open('facil.pickle', 'wb') as data_bin:
-                    pickle.dump(self.all_content, data_bin)
-
-            except IOError as err:
-                print ("File error: " + str(err))
-
-        self.init_stat_table()
-        self.even_odd = {"e0xo15": [], "e1xo14": [], "e2xo13": [], "e3xo12": [], "e4xo11": [], "e5xo10": [], "e6xo9": [], "e7xo8": [], "e8xo7": [], "e9xo6": [], "e10xo5": [], "e11xo4": [], "e12xo3": [], "e13xo2": [], "e14xo1": [], "e15xo0": []}
-        self.doze = {"0x": [], "1x": [], "2x": []}
-        self.build_occur_list()
-        self.build_freq_dict()
-        self.build_delay_list()
-        self.more_often_num()
-        self.last_time()
-        self.most_delay()
-        self.aver_delay()
-        self.fill_up_stand_dev()
-        self.fill_up_stand_sco()
-        self.rule_even_by_odd()
-        self.more_often_dozen()
-        self.more_often_unit()
+        Lottery.__init__(self, data_file, sub_table = 0)
 
     ##### Methods for Printing #####
     def print_more_often_dozen (self):

@@ -20,19 +20,59 @@ from __future__ import print_function
 import operator
 import matplotlib.pyplot as plt
 import utils
-import pdb
+import os
+import pickle
+from parsepage import ParsePage
 import numpy as np
 
 class Lottery (object):
     """
     """
-    def __init__(self):
+    def __init__(self, data_file, sub_table = 0):
         """
         """
+        if os.path.exists(self.pickle_file):
+            if os.path.getmtime(self.pickle_file) > os.path.getmtime(data_file):
+                try:
+                    with open(self.pickle_file, 'rb') as data_bin:
+                        self.all_content = pickle.load(data_bin)
+                        if sub_table > 0:
+                            self.all_content = self.all_content[:sub_table]
+
+                except IOError as err:
+                    print ("File error: " + str(err))
+        else:
+            p = ParsePage(self.doz_by_raffle) 
+            p.feed(utils.get_content(data_file))
+            self.all_content = p.get_full_data()
+            if sub_table > 0:
+                self.all_content = self.all_content[:sub_table]
+            try:
+                with open(self.pickle_file, 'wb') as data_bin:
+                    pickle.dump(self.all_content, data_bin)
+
+            except IOError as err:
+                print ("File error: " + str(err))
+
         self.all_stat = []
         self.even_odd = {}
         self.doze = {}
+        self.even_odd = {'e' + str(i) + 'xo' + str(j): [] for i in range(0, self.doz_by_raffle + 1) for j in reversed(range(0, self.doz_by_raffle + 1))  if (i+j) == self.doz_by_raffle}
+        self.doze = {str(i) + 'x': [] for i in range(0, self.dozen_dozens + 1)}
         self.unit = {"x0": [], "x1": [], "x2": [], "x3": [], "x4": [], "x5": [], "x6": [], "x7": [], "x8": [], "x9": []}
+        self.init_stat_table()
+        self.build_occur_list()
+        self.build_delay_list()
+        self.build_freq_dict()
+        self.more_often_num()
+        self.last_time()
+        self.most_delay()
+        self.aver_delay()
+        self.fill_up_stand_dev()
+        self.fill_up_stand_sco()
+        self.rule_even_by_odd()
+        self.more_often_dozen()
+        self.more_often_unit()
 
     def init_stat_table(self):
         """
