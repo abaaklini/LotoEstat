@@ -37,137 +37,15 @@ class SenaStats (Lottery):
 
         Lottery.__init__(self, data_file, sub_table = 0)
 
-    ##### Methods for Printing #####
-    def print_more_often_dozen (self):
-        """
-        """
-        di = {'0x': len(self.doze['0x']),
-              '1x': len(self.doze['1x']),
-              '2x': len(self.doze['2x']),
-              '3x': len(self.doze['3x']),
-              '4x': len(self.doze['4x']),
-              '5x': len(self.doze['5x']),
-              '6x': len(self.doze['6x']) * 10}
-
-        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
-        for each in sorted_list:
-            print(each)
-
-    def print_rule_even_by_odd(self):
-        """
-        """
-        di = {'e0xo6': len(self.even_odd['e0xo6']),
-              'e1xo5': len(self.even_odd['e1xo5']),
-              'e2xo4': len(self.even_odd['e2xo4']),
-              'e3xo3': len(self.even_odd['e3xo3']),
-              'e4xo2': len(self.even_odd['e4xo2']),
-              'e5xo1': len(self.even_odd['e5xo1']),
-              'e6xo0': len(self.even_odd['e6xo0'])}
-
-        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
-        for each in sorted_list:
-            print(each)
-
     ##### Methods for Plotting #####
-    def plot_doze (self):
-        """
-        """
-        done = False
-        
-        while not done :
-            cmd = utils.print_second_menu()
-        
-            if cmd == 'pie' :
-                #Pie chart
-                vals = []
-                keys = []
-                for i, k in enumerate(self.doze):
-                    vals.append(len(self.doze[k]))
-                    keys.append(k)
-
-                plt.figure(figsize=(6,6))
-                plt.pie(vals, labels=keys, autopct='%1.1f%%')
-                plt.show()
-
-            elif cmd == 'line' :
-                vals = []
-                keys = []
-                dic = {}
-                for k, v in self.doze.items():
-                    dic[k] = len(v)
-                sorted_list = sorted(dic.items(), key=operator.itemgetter(1), reverse=True)
-                for each in sorted_list:
-                    (k, v) = each
-                    vals.append(v)
-                    keys.append(k)
-
-                plt.plot(vals)
-                plt.xticks(np.arange(len(keys)), keys)
-                plt.show()
-
-            elif cmd == 'bar' :
-                for i, k in enumerate(self.doze):
-                    plt.bar(i, len(self.doze[k]))
-
-                plt.xticks(np.arange(len(self.doze)) + 0.4, self.doze.keys())
-                plt.show()
-
-            elif cmd == 'delay' :
-                done = False
-                
-                while not done :
-                    opt = utils.print_option_menu(6)
-
-                    if opt == 'done' :
-                        break
-
-                    delay = []
-                    v = self.doze[opt + 'x']
-                    for ind in range(len(v) - 1):
-                        delay.append(v[ind + 1] - v[ind])
-                    plt.plot(delay, label=opt + 'x')
-                    print (delay)
-                    plt.title('Delay')
-                    plt.xlabel('Times raffled')
-                    plt.ylabel('Delay between raffles')
-                    plt.legend()
-                    plt.show()
-
-            elif cmd == 'freq' :
-                done = False
-                
-                while not done :
-                    opt = utils.print_option_menu(6)
-                
-                    if opt == 'done' :
-                        break
-
-                    delay = []
-                    v = self.doze[opt + 'x']
-                    for ind in range(len(v) - 1):
-                        delay.append(v[ind + 1] - v[ind])
-                    delay.sort()
-                    plt.plot(delay, label=opt + 'x')
-                    print (delay)
-                    plt.title('Delay')
-                    plt.xlabel('Times raffled')
-                    plt.ylabel('Delay between raffles')
-                    plt.legend()
-                    plt.show()
-
-            elif cmd == 'done' :
-                done = True
-            else :
-                print ("I don't understand the command " + cmd)
-
     def plot_rule (self):
         """
         """
         done = False
-        
+
         while not done :
             cmd = utils.print_second_menu()
-        
+
             if cmd == 'pie' :
                 #Pie chart
                 vals = []
@@ -212,9 +90,9 @@ class SenaStats (Lottery):
                        "5" : "e4xo2",
                        "6" : "e5xo1",
                        "7" : "e6xo0"}
-                
+
                 while not done :
-                
+
                     print ('')
                     print ('\033[92m' + "Choose the rule option:" + '\033[0m')
                     print ('')
@@ -254,9 +132,9 @@ class SenaStats (Lottery):
                        "5" : "e4xo2",
                        "6" : "e5xo1",
                        "7" : "e6xo0"}
-                
+
                 while not done :
-                
+
                     print ('')
                     print ('\033[92m' + "Choose the rule option:" + '\033[0m')
                     print ('')

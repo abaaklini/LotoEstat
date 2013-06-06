@@ -1,13 +1,6 @@
 TODO: 
-    - DONE split the code to different files
-    - DONE adapt to Mega-Sena
-    - DONE Find the average a number arise; ("More")
-    - DONE Find the deviation by media; ("More")
-    - DONE Positioning the number in the quartiles; ("More")
-    - DONE Find the deviation by de media; ("Delay")
-    - DONE Positioning the number in the quartiles; ("Delay")
-    - DONE adapt to Lotofacil (More difficult due to data stored in different formats)
-    - DONE make this app in a Web App;
+    - Check the sum of the numbers raffled
+    - Check the numbers mutually exclusives
     - If the directories and files doesn't exist, create it
     - Fix the Unicode problem on all_content
     - Calculate the probability of a number been raffled, based upon it's score;("Sugm/Sugl")

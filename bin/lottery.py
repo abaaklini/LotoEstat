@@ -59,7 +59,7 @@ class Lottery (object):
         self.doze = {}
         self.even_odd = {'e' + str(i) + 'xo' + str(j): [] for i in range(0, self.doz_by_raffle + 1) for j in reversed(range(0, self.doz_by_raffle + 1))  if (i+j) == self.doz_by_raffle}
         self.doze = {str(i) + 'x': [] for i in range(0, self.dozen_dozens + 1)}
-        self.unit = {"x0": [], "x1": [], "x2": [], "x3": [], "x4": [], "x5": [], "x6": [], "x7": [], "x8": [], "x9": []}
+        self.unit = {'x' + str(i): [] for i in range(0, 10)}
         self.init_stat_table()
         self.build_occur_list()
         self.build_delay_list()
@@ -74,174 +74,27 @@ class Lottery (object):
         self.more_often_dozen()
         self.more_often_unit()
 
+    def print_more_often_dozen (self):
+        """
+        """
+        di = {str(i) + 'x': len(self.doze[str(i) + 'x']) for i in range(0, self.dozen_dozens + 1) for j in reversed(range(0, self.dozen_dozens + 1))  if (i+j) == self.dozen_dozens}
+        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
+        for each in sorted_list:
+            print(each)
+
     def init_stat_table(self):
         """
         """
         for num in range(1, self.num_dozens + 1):
             self.all_stat.append({'More': 0, 'Last': 0, 'Average': 0, 'Worst': 0, 'Occur': [], 'Delay': [], 'Std_Dev': 0, 'Std_Sco': 0, 'Freq':{}})
 
-    ##### Methods for Printing #####
-    def print_more_often_unit (self):
+    def print_rule_even_by_odd(self):
         """
         """
-        di = {'x0': len(self.unit['x0']),
-              'x1': len(self.unit['x1']),
-              'x2': len(self.unit['x2']),
-              'x3': len(self.unit['x3']),
-              'x4': len(self.unit['x4']),
-              'x5': len(self.unit['x5']),
-              'x6': len(self.unit['x6']),
-              'x7': len(self.unit['x7']),
-              'x8': len(self.unit['x8']),
-              'x9': len(self.unit['x9'])}
-
+        di = {'e' + str(i) + 'xo' + str(j): len(self.even_odd['e' + str(i) + 'xo' + str(j)]) for i in range(0, self.doz_by_raffle + 1) for j in reversed(range(0, self.doz_by_raffle + 1))  if (i+j) == self.doz_by_raffle}
         sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
         for each in sorted_list:
             print(each)
-
-    def prepare_to_print(self, key):
-        """
-        """
-        di ={} 
-        for ind, val in enumerate(self.all_stat):
-            num = ind + 1
-            if num < 10:
-                el = '0' + str(num)
-            else:
-                el = str(num)
-            di[str(el)] = val[key]
-
-        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
-        print(sorted_list)
-
-    def print_freq_dict(self):
-        """
-        """
-        for ind, each in enumerate(self.all_stat):
-            dic = each['Freq']
-            sorted_list = sorted(dic.items(), key=operator.itemgetter(0), reverse=False)
-            print(str(ind))
-            print(str(sorted_list))
-
-    def print_full_data(self):
-        """
-        """
-        for el in self.all_content:
-            print(el)
-        #    for k, v in el.items():
-        #        print(k + ':' + repr(v))
-
-
-    ##### Methods for Plotting #####
-    def plot_unit (self):
-        """
-        """
-        done = False
-        
-        while not done :
-        
-            print ('')
-            print ('\033[92m' + "The following commands are available: " + '\033[0m')
-            print ('')
-            print ("pie   : show the data plotted on a pie chart")
-            print ("bar   : show the data plotted on a bar chart")
-            print ("line  : show the data plotted on a line chart")
-            print ("delay : show the delay over the raffles, plus the average delay")
-            print ("freq  : show the frequency of delays")
-            print ("done  : exit the program")
-            print ('')
-            cmd = raw_input('\033[92m' + 'Enter a command: ' + '\033[0m')
-            print ('')
-
-            if cmd == 'pie' :
-                #Pie chart
-                vals = []
-                keys = []
-                for i, k in enumerate(self.unit):
-                    vals.append(len(self.unit[k]))
-                    keys.append(k)
-
-                plt.figure(figsize=(6,6))
-                plt.pie(vals, labels=keys, autopct='%1.1f%%')
-                plt.show()
-
-            elif cmd == 'line' :
-                vals = []
-                keys = []
-                dic = {}
-                for k, v in self.unit.items():
-                    dic[k] = len(v)
-                sorted_list = sorted(dic.items(), key=operator.itemgetter(1), reverse=True)
-                for each in sorted_list:
-                    (k, v) = each
-                    vals.append(v)
-                    keys.append(k)
-
-                plt.plot(vals)
-                plt.xticks(np.arange(len(keys)), keys)
-                plt.show()
-
-            elif cmd == 'bar' :
-                for i, k in enumerate(self.unit):
-                    plt.bar(i, len(self.unit[k]))
-
-                plt.xticks(np.arange(len(self.unit)) + 0.4, self.unit.keys())
-                plt.show()
-
-            elif cmd == 'delay' :
-                done = False
-                
-                while not done :
-                    opt = utils.print_option_menu(9)
-
-                    if opt == 'done' :
-                        break
-
-                    delay = []
-                    v = self.unit['x' + opt]
-                    for ind in range(len(v) - 1):
-                        delay.append(v[ind + 1] - v[ind])
-                    plt.plot(delay, label='x' + opt)
-                    print (delay)
-                    plt.show()
-
-            elif cmd == 'freq' :
-                done = False
-                
-                while not done :
-                    opt = utils.print_option_menu(9)
-                
-                    if opt == 'done' :
-                        break
-
-                    delay = []
-                    v = self.unit['x' + opt]
-                    for ind in range(len(v) - 1):
-                        delay.append(v[ind + 1] - v[ind])
-                    delay.sort()
-                    plt.plot(delay, label='x' + opt)
-                    print (delay)
-                    plt.show()
-
-            elif cmd == 'done' :
-                done = True
-            else :
-                print ("I don't understand the command " + cmd)
-
-    def plot_more_often(self):
-        """
-        """
-        num = int(raw_input('\033[92m' + 'Enter a number to plot (or 0 for none): ' + '\033[0m'))
-        if num == 0:
-            return
-
-        aver = []
-        for ind in range(len(self.all_stat[num - 1]['Occur']) - 1):
-            aver.append(self.all_stat[num - 1]['Average'])
-
-        plt.hist(self.all_stat[num - 1]['Delay'], len(self.all_stat[num - 1]['Delay']))
-        #plt.plot(aver, label='Average') 
-        plt.show()
 
     ##### Methods for Computing #####
     def build_occur_list(self):
@@ -389,7 +242,7 @@ class Lottery (object):
                 num = str(num)
             dozens.append(num)
         dozens.sort()
-           
+
         founded = False
         for each in self.all_content:
             if dozens == each["Dozens"]:
@@ -397,11 +250,11 @@ class Lottery (object):
                 print ('')
                 print ('\033[92m' + 'Dozens founded :' + '\033[0m')
                 print ('Date : ' + each['Date'])
-           
+
         if not founded:
             # TODO: Test the numbers with/against the statistics
             print ('Dozens not founded')
-                
+
     def screen_interf (self):
         """
         """
@@ -425,7 +278,7 @@ class Lottery (object):
 
             elif cmd == 'show' :
                 self.print_full_data()
-    
+
             elif cmd == 'rule' :
                 self.print_rule_even_by_odd()
                 self.plot_rule()
@@ -490,9 +343,254 @@ class Lottery (object):
                 self.prepare_to_print('Delay')
                 self.prepare_to_print('Std_Dev')
                 self.prepare_to_print('Std_Sco')
-        
+
             else :
                 print ("I don't understand the command " + cmd)
-    
+
+    ##### Methods for Printing #####
+    def print_more_often_unit (self):
+        """
+        """
+        di = {'x' + str(i): [] for i in range(0, 10)}
+
+        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
+        for each in sorted_list:
+            print(each)
+
+    def prepare_to_print(self, key):
+        """
+        """
+        di ={} 
+        for ind, val in enumerate(self.all_stat):
+            num = ind + 1
+            if num < 10:
+                el = '0' + str(num)
+            else:
+                el = str(num)
+            di[str(el)] = val[key]
+
+        sorted_list = sorted(di.items(), key=operator.itemgetter(1), reverse=True)
+        print(sorted_list)
+
+    def print_freq_dict(self):
+        """
+        """
+        for ind, each in enumerate(self.all_stat):
+            dic = each['Freq']
+            sorted_list = sorted(dic.items(), key=operator.itemgetter(0), reverse=False)
+            print(str(ind))
+            print(str(sorted_list))
+
+    def print_full_data(self):
+        """
+        """
+        for el in self.all_content:
+            print(el)
+        #    for k, v in el.items():
+        #        print(k + ':' + repr(v))
+
+
+    ##### Methods for Plotting #####
+    def plot_unit (self):
+        """
+        """
+        done = False
+
+        while not done :
+
+            print ('')
+            print ('\033[92m' + "The following commands are available: " + '\033[0m')
+            print ('')
+            print ("pie   : show the data plotted on a pie chart")
+            print ("bar   : show the data plotted on a bar chart")
+            print ("line  : show the data plotted on a line chart")
+            print ("delay : show the delay over the raffles, plus the average delay")
+            print ("freq  : show the frequency of delays")
+            print ("done  : exit the program")
+            print ('')
+            cmd = raw_input('\033[92m' + 'Enter a command: ' + '\033[0m')
+            print ('')
+
+            if cmd == 'pie' :
+                #Pie chart
+                vals = []
+                keys = []
+                for i, k in enumerate(self.unit):
+                    vals.append(len(self.unit[k]))
+                    keys.append(k)
+
+                plt.figure(figsize=(6,6))
+                plt.pie(vals, labels=keys, autopct='%1.1f%%')
+                plt.show()
+
+            elif cmd == 'line' :
+                vals = []
+                keys = []
+                dic = {}
+                for k, v in self.unit.items():
+                    dic[k] = len(v)
+                sorted_list = sorted(dic.items(), key=operator.itemgetter(1), reverse=True)
+                for each in sorted_list:
+                    (k, v) = each
+                    vals.append(v)
+                    keys.append(k)
+
+                plt.plot(vals)
+                plt.xticks(np.arange(len(keys)), keys)
+                plt.show()
+
+            elif cmd == 'bar' :
+                for i, k in enumerate(self.unit):
+                    plt.bar(i, len(self.unit[k]))
+
+                plt.xticks(np.arange(len(self.unit)) + 0.4, self.unit.keys())
+                plt.show()
+
+            elif cmd == 'delay' :
+                done = False
+
+                while not done :
+                    opt = utils.print_option_menu(9)
+
+                    if opt == 'done' :
+                        break
+
+                    delay = []
+                    v = self.unit['x' + opt]
+                    for ind in range(len(v) - 1):
+                        delay.append(v[ind + 1] - v[ind])
+                    plt.plot(delay, label='x' + opt)
+                    print (delay)
+                    plt.show()
+
+            elif cmd == 'freq' :
+                done = False
+
+                while not done :
+                    opt = utils.print_option_menu(9)
+
+                    if opt == 'done' :
+                        break
+
+                    delay = []
+                    v = self.unit['x' + opt]
+                    for ind in range(len(v) - 1):
+                        delay.append(v[ind + 1] - v[ind])
+                    delay.sort()
+                    plt.plot(delay, label='x' + opt)
+                    print (delay)
+                    plt.show()
+
+            elif cmd == 'done' :
+                done = True
+            else :
+                print ("I don't understand the command " + cmd)
+
+    def plot_more_often(self):
+        """
+        """
+        num = int(raw_input('\033[92m' + 'Enter a number to plot (or 0 for none): ' + '\033[0m'))
+        if num == 0:
+            return
+
+        aver = []
+        for ind in range(len(self.all_stat[num - 1]['Occur']) - 1):
+            aver.append(self.all_stat[num - 1]['Average'])
+
+        plt.hist(self.all_stat[num - 1]['Delay'], len(self.all_stat[num - 1]['Delay']))
+        #plt.plot(aver, label='Average') 
+        plt.show()
+
+    def plot_doze (self):
+        """
+        """
+        done = False
+
+        while not done :
+            cmd = utils.print_second_menu()
+
+            if cmd == 'pie' :
+                #Pie chart
+                vals = []
+                keys = []
+                for i, k in enumerate(self.doze):
+                    vals.append(len(self.doze[k]))
+                    keys.append(k)
+
+                plt.figure(figsize=(6,6))
+                plt.pie(vals, labels=keys, autopct='%1.1f%%')
+                plt.show()
+
+            elif cmd == 'line' :
+                vals = []
+                keys = []
+                dic = {}
+                for k, v in self.doze.items():
+                    dic[k] = len(v)
+                sorted_list = sorted(dic.items(), key=operator.itemgetter(1), reverse=True)
+                for each in sorted_list:
+                    (k, v) = each
+                    vals.append(v)
+                    keys.append(k)
+
+                plt.plot(vals)
+                plt.xticks(np.arange(len(keys)), keys)
+                plt.show()
+
+            elif cmd == 'bar' :
+                for i, k in enumerate(self.doze):
+                    plt.bar(i, len(self.doze[k]))
+
+                plt.xticks(np.arange(len(self.doze)) + 0.4, self.doze.keys())
+                plt.show()
+
+            elif cmd == 'delay' :
+                done = False
+
+                while not done :
+                    opt = utils.print_option_menu(self.dozen_dozens)
+
+                    if opt == 'done' :
+                        break
+
+                    delay = []
+                    v = self.doze[opt + 'x']
+                    for ind in range(len(v) - 1):
+                        delay.append(v[ind + 1] - v[ind])
+                    plt.plot(delay, label=opt + 'x')
+                    print (delay)
+                    plt.title('Delay')
+                    plt.xlabel('Times raffled')
+                    plt.ylabel('Delay between raffles')
+                    plt.legend()
+                    plt.show()
+
+            elif cmd == 'freq' :
+                done = False
+
+                while not done :
+                    opt = utils.print_option_menu(self.done)
+
+                    if opt == 'done' :
+                        break
+
+                    delay = []
+                    v = self.doze[opt + 'x']
+                    for ind in range(len(v) - 1):
+                        delay.append(v[ind + 1] - v[ind])
+                    delay.sort()
+                    plt.plot(delay, label=opt + 'x')
+                    print (delay)
+                    plt.title('Delay')
+                    plt.xlabel('Times raffled')
+                    plt.ylabel('Delay between raffles')
+                    plt.legend()
+                    plt.show()
+
+            elif cmd == 'done' :
+                done = True
+            else :
+                print ("I don't understand the command " + cmd)
+
 if __name__ == '__main__':
     print('lottery.py')
