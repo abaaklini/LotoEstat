@@ -1,0 +1,398 @@
+This is a test file to the utils.py module:
+
+>>> import utils
+
+Test for the ret_unit function
+
+>>> utils.ret_unit(int('00'))
+0
+>>> utils.ret_unit(int('01'))
+1
+>>> utils.ret_unit(int('02'))
+2
+>>> utils.ret_unit(int('03'))
+3
+>>> utils.ret_unit(int('04'))
+4
+>>> utils.ret_unit(int('05'))
+5
+>>> utils.ret_unit(int('06'))
+6
+>>> utils.ret_unit(int('07'))
+7
+>>> utils.ret_unit(int('08'))
+8
+>>> utils.ret_unit(int('09'))
+9
+
+Trying hard with up to 100 elements
+
+>>> for ind in range(0,100):
+...     utils.ret_unit(ind)
+... 
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+Now testing  the dozen function
+
+>>> utils.dozen(int('01'))
+0
+>>> utils.dozen(int('02'))
+0
+>>> utils.dozen(int('03'))
+0
+>>> utils.dozen(int('04'))
+0
+>>> utils.dozen(int('05'))
+0
+>>> utils.dozen(int('06'))
+0
+>>> utils.dozen(int('07'))
+0
+>>> utils.dozen(int('08'))
+0
+>>> utils.dozen(int('09'))
+0
+>>> for ind in range(0,100):
+...     utils.dozen(ind)
+... 
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+3
+3
+3
+3
+3
+3
+3
+3
+3
+3
+4
+4
+4
+4
+4
+4
+4
+4
+4
+4
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+7
+7
+7
+7
+7
+7
+7
+7
+7
+7
+8
+8
+8
+8
+8
+8
+8
+8
+8
+8
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+
+Testing the isodd function
+
+>>> for ind in range(0,100):
+...     utils.isodd(ind)
+... 
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+False
+True
+
+And now the get_content function
+
+>>> utils.get_content('./data/D_QUINA.HTM')# doctest: +ELLIPSIS
+'<html>\r<head>\r<title>Resultado da Quina</title>\r<STYLE>\rTD {\rFONT-FAMILY: Arial;\rFONT-SIZE: 10pt;\rHEIGHT: 15pt;\rTEXT-ALIGN: center\r}\r</STYLE>\r</head>\r<body>\r<p><strong><big><big><font face="Arial" color="#004080">Resultado da Quina</font></big></big></strong></p>\r<p><img src="t7.gif">\r</p>\r<table border="0" cellspacing="1" cellpadding="0" width="1430">\r<tr>\r<th width="50"  height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Concurso</font></small></th>\r<th width="140" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Data Sorteio</font></small></th>\r<th width="80" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">1\xaa Dezena</font></small></th>\r<th width="80" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">2\xaa Dezena</font></small></th>\r<th width="80" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">3\xaa Dezena</font></small></th>\r<th width="80" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">4\xaa Dezena</font></small></th>\r<th width="80" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">5\xaa Dezena</font></small></th>\r<th width="120" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Arrecadacao_Total</font></small></th>\r<th width="95"  height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Ganhadores_Quina</font></small></th>\r<th width="120" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Rateio_Quina</font></small></th>\r<th width="120" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Ganhadores_Quadra</font></small></th>\r<th width="131" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Rateio_Quadra</font></small></th>\r<th width="120" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Ganhadores_Terno</font></small></th>\r<th width="131" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Rateio_Terno</font></small></th>\r<th width="120" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Acumulado</font></small></th>\r<th width="130" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Valor_Acumulado</font></small></th>\r<th width="120" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Estimativa_Premio</font></small></th>\r<th width="120" height="20" bgcolor="#7BA8D9"><small><font face="Arial" color="#FFFFFF">Valor_Acumulado_Sorteio_Especial_S\xe3o_Jo\xe3o</font></small></th>...'
+
+>>> utils.mean([1,2,3,4,5,6,7])
+4.0
+
+>>> utils.mean([1,2,3,4,5,6])
+3.5
+
+>>> utils.mean([1,2,3,4,5,6,7,-8])
+2.5
+
+>>> utils.mean([-1,-2,-3,-4,-5,-6,-7])
+-4.0
+
+>>> utils.mean([0])
+0.0
+
+>>> utils.standard_deviation([1,2,3,4,5,6], utils.mean([1,2,3,4,5,6]))
+1.707825127659933
+
+>>> utils.standard_deviation([1,2,3,4,5,6,7], utils.mean([1,2,3,4,5,6,7]))
+2.0
+
+>>> utils.standard_score(75,70,20)
+0.25
+
+>>> utils.standard_score(55,40,10)
+1.5
+
+>>> utils.standard_score(35,40,10)
+-0.5
+

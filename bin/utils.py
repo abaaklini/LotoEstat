@@ -161,6 +161,6 @@ def print_second_menu():
 def _test():
     import doctest
     doctest.testmod()
-    doctest.testfile("test/utils_test.txt")
+    doctest.testfile("./test/utils_test.txt")
 
 if __name__ == '__main__': _test()

@@ -4,6 +4,7 @@
 *.o
 *.pickle
 *.log
+tags
 /tags
 /etags
 /build/
